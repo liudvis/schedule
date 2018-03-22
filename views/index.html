@@ -1,0 +1,88 @@
+<head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css">    <link rel="stylesheet" type="text/css" href="/app.css"> 
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.js"></script></head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js" type="text/javascript"></script>
+<body>
+
+
+
+<div>
+<button class="ui primary button" id="smallcalendar"><span id="demo"></span>
+  <i class="calendar alternate outline icon"></i>
+</button>
+</div>
+
+<div class="ui stackable two column grid">
+  <div class="column">
+    <div class="ui required fluid action input" id="meetingInput">
+      <input type="text" placeholder="Add a meeting here.." id="meeting" name="empty">
+      <select class="ui compact selection dropdown"  id="dropdown1" name="empty1">
+          <option value="">Start</option>
+          <option value="0">9:00</option>
+          <option value="1">10:00</option>
+          <option value="2">11:00</option>
+          <option value="3">13:00</option>
+          <option value="4">14:00</option>
+          <option value="5">15:00</option>
+          <option value="6">16:00</option>
+          <option value="7">17:00</option>
+      </select>
+        <select class="ui compact selection dropdown"  id="dropdown2" name="empty2">
+          <option value="">End</option>
+          <option value="0">10:00</option>
+          <option value="1">11:00</option>
+          <option value="2">12:00</option>
+          <option value="3">14:00</option>
+          <option value="4">15:00</option>
+          <option value="5">16:00</option>
+          <option value="6">17:00</option>
+          <option value="7">18:00</option>
+        </select>
+      <div class="ui primary icon button" id='submit1'><i class="plus icon"></i>
+</div>
+  </div>
+  </div>
+  <div class="column">
+        <div class="ui  form" id="field2">
+            <label>Insert a task:</label>
+            <input type="text" id="task" placeholder="Add a task here.." required>
+          </div>
+        </div>
+  </div>
+  
+  
+
+<h4 class="ui horizontal divider header" id="demo1">
+  <i class="calendar alternate outline icon"></i>
+</h4>
+
+  <table class="ui celled striped table unstackable" id="calendar">
+  <thead>
+    <tr><th>M</th>
+    <th>T</th>
+    <th>W</th>
+    <th>T</th>
+    <th>F</th>
+    <th>S</th>
+    <th>S</th>
+  </tr></thead>
+  <tbody id="tableBody">
+  </tbody>
+  </table>
+
+<div class="ui grid">
+  <div class="eight wide column">
+    <div class="ui bulleted divided list" id="list1">
+     </div>   
+  </div>
+
+  <div class="eight wide column">
+    <div class="ui bulleted divided list" id="list2">
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="app.js"></script>
+</body>
+
