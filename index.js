@@ -1,6 +1,6 @@
 var express     = require('express'),
     app         = express(),
-    port        = 8080,
+    port        = process.env.PORT,
     bodyParser  = require("body-parser");
     
 var scheduleRoutes = require('./routes/schedules');
