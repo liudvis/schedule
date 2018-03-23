@@ -12,9 +12,9 @@
 .selection {
   width:24%;
 }
-/*#list1, #list2 {*/
-/*  font-size:1.2em;*/
-/*}*/
+#list1, #list2 {
+  font-size:1.2em;
+}
 
 #meetingInput {
   margin-top: 16.67px; 
@@ -35,13 +35,17 @@ p{
 }
 .done {
 	text-decoration: line-through;
-	color: #bdc3c7;
-}
-span {
-    float:right;
+	color: #9fa4a8;
 }
 td:hover { 
     background-color: #0A9BD8;
+}
+.elementChange {
+    margin: auto;
+    text-align: center;
+    background-color: #0A9BD8;
+    list-style-type: none;
+    color: white;
 }
 .header {
   margin: auto;
@@ -75,6 +79,7 @@ td:hover {
 }
 
 .dropdown-content option {
+    font-size: .9em;
     color: black;
     padding: 3px 4px;
     text-decoration: none;

@@ -4,28 +4,29 @@ $(document).ready(function(){
     hidingElements();
     var selected =0;
     $('#DDN').dropdown();
-    
+      $('#list2').on('click', 'div', function(e){
+            ($(this)).toggleClass('done', 200);
+            e.stopPropagation();
+
+        });
       $('.list').on('click', 'option', function(e){
+            var element = $($(this).parent().parent().parent());
             if($(this).val()==0){
-                    $($(this).parent().parent().parent()).fadeOut("fast",function(){
-                    updateTodo($(this));
+                    element.html('Moved to Tomorrow <i class="check icon"></i>');
+                    element.addClass('elementChange');
+                    element.fadeOut(2000,function(){
+                    updateTodo(element);
                     });
             }
             else if($(this).val()==2){
-                    $($(this).parent().parent().parent()).fadeOut("fast",function(){
-                    deleteSchedule($(this));
+                    element.html('Deleted <i class="check icon"></i>');
+                    element.addClass('elementChange');
+                    element.fadeOut(2000,function(){
+                    deleteSchedule(element);
                     });
             }
             e.stopPropagation();
           });
-    //   $('.list').on('click', 'i', function(e){
-    //       e.stopPropagation();
-    //       $($(this).parent().parent()).fadeOut("fast",function(){
-    //         updateTodo($(this));
-    //       });
-    //       });      
-      
-      
     $('#task').keypress(function(event){
         if(event.keyCode===13){
         createTodo(selected);
