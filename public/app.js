@@ -5,18 +5,25 @@ $(document).ready(function(){
     var selected =0;
     $('#DDN').dropdown();
     
-      $('.list').on('click', 'span', function(e){
+      $('.list').on('click', 'option', function(e){
+            if($(this).val()==0){
+                    $($(this).parent().parent().parent()).fadeOut("fast",function(){
+                    updateTodo($(this));
+                    });
+            }
+            else if($(this).val()==2){
+                    $($(this).parent().parent().parent()).fadeOut("fast",function(){
+                    deleteSchedule($(this));
+                    });
+            }
             e.stopPropagation();
-            $($(this).parent()).fadeOut("fast",function(){
-            deleteSchedule($(this));
-            });
           });
-      $('.list').on('click', 'i', function(e){
-          e.stopPropagation();
-          $($(this).parent().parent()).fadeOut("fast",function(){
-            updateTodo($(this));
-          });
-          });      
+    //   $('.list').on('click', 'i', function(e){
+    //       e.stopPropagation();
+    //       $($(this).parent().parent()).fadeOut("fast",function(){
+    //         updateTodo($(this));
+    //       });
+    //       });      
       
       
     $('#task').keypress(function(event){
@@ -47,16 +54,39 @@ $(document).ready(function(){
                 addSchedule(schedule);
             });
         }
+        function ddnButton (schedule) {
+            if(schedule.type==="todo"){
+            var ddnTodo= 
+            '<div class="dropdown" style="float:right;">\
+                  <button class="dropbtn"><i class="ellipsis horizontal icon"></i></button>\
+                  <div class="dropdown-content">\
+                    <option value="0">Move to tomorrow</option>\
+                    <option value="1">Move to another day</option>\
+                    <option value="2">Delete</option>\
+                  </div>\
+                </div>';
+            return ddnTodo;}
+            else {
+            var ddnMeeting = 
+                    '<div class="dropdown" style="float:right;">\
+                  <button class="dropbtn"><i class="ellipsis horizontal icon"></i></button>\
+                  <div class="dropdown-content">\
+                    <option value="2">Delete</option>\
+                  </div>\
+                </div>';
+            return ddnMeeting;}
+            
+        }
         function addSchedule(schedule){
             if(selected == schedule.day){
             if(schedule.type==="meeting"){
-                var newMeeting = $('<div class="meeting">'+schedule.name+'<span>x</span></div>').hide().fadeIn("fast");                 
+                var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
                 newMeeting.data('id', schedule._id);
                 $('#list1').append(newMeeting);
                 $('#dropdown1').val('');
                 $('#dropdown2').val('');
             } else if (schedule.type==="todo"){
-                var newTodo =  $('<div class="item">'+schedule.name+'<span><i class="share icon"></i> </span><span>x<span></div>').hide().fadeIn("fast");
+                var newTodo =  $('<div class="item">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");
                 newTodo.data('id', schedule._id);
                 newTodo.data('day', schedule.day);
                     if(newTodo.completed){
