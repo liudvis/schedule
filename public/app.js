@@ -12,16 +12,14 @@ $(document).ready(function(){
       $('.list').on('click', 'option', function(e){
             var element = $($(this).parent().parent().parent());
             if($(this).val()==0){
-                    element.html('Moved to Tomorrow <i class="check icon"></i>');
-                    element.addClass('elementChange');
-                    element.fadeOut(2000,function(){
+                    element.html('<div>Moved to Tomorrow <i class="check icon"></i></div>');
+                    element.addClass('elementChange').delay(1000).slideUp(700,function(){
                     updateTodo(element);
                     });
             }
             else if($(this).val()==2){
-                    element.html('Deleted <i class="check icon"></i>');
-                    element.addClass('elementChange');
-                    element.fadeOut(2000,function(){
+                    element.html('<div>Deleted  <div class="divcheck"><i class="check icon"></div></i></div>');
+                    element.addClass('elementChange').delay(1000).slideUp(700,function(){
                     deleteSchedule(element);
                     });
             }
@@ -115,7 +113,7 @@ $(document).ready(function(){
     
         function createMeeting(day){
         var timeInput = $('#dropdown1 option:selected').text()+"-"+$('#dropdown2 option:selected').text();
-        var userInput = '<strong>'+timeInput+'</strong>  '+$('#meeting').val();
+        var userInput = ' <span class="meetingTimeDisplay">'+" "+timeInput+' </span>  '+"  "+$('#meeting').val();
         if(userInput=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End") {
             $('#meetingInput').effect("shake");
         } else {
