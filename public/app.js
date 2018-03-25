@@ -88,9 +88,6 @@ $(document).ready(function(){
                 var newTodo =  $('<div class="item">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");
                 newTodo.data('id', schedule._id);
                 newTodo.data('day', schedule.day);
-                    if(newTodo.completed){
-                        newTodo.addClass("done");
-                    }
                 $('#list2').append(newTodo);
             }
             }       
@@ -113,7 +110,7 @@ $(document).ready(function(){
     
         function createMeeting(day){
         var timeInput = $('#dropdown1 option:selected').text()+"-"+$('#dropdown2 option:selected').text();
-        var userInput = ' <span class="meetingTimeDisplay">'+" "+timeInput+' </span>  '+"  "+$('#meeting').val();
+        var userInput = '<span class="meetingTimeDisplay">'+timeInput+'</span>'+$('#meeting').val();
         if(userInput=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End") {
             $('#meetingInput').effect("shake");
         } else {

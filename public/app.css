@@ -3,19 +3,23 @@
 /*    width: 425px;*/
 /*    margin: auto;*/
 /*}*/
-#list1, #list2{
-  float: left;
-  width: 94%;
+#list1{
+  width: 100%;
   margin: auto;
-  font-size: 1.1em;
+  font-size: 1.2em;
 }
-.selection {
-  width:24%;
+#list2{
+  float:right;
+  width: 100%;
+  margin: auto;
+  font-size: 1.2em;
 }
-#list1, #list2 {
-  font-size:1.2em;
+#lists {
+  margin: auto;
 }
-
+.listElement{
+  padding-left: 5px;
+}
 #meetingInput {
   margin-top: 16.67px; 
 }
@@ -52,8 +56,11 @@ p{
   display: inline;
 }
 .meetingTimeDisplay{
+  /*padding-left: 5px;*/
+  /*padding-right: 4px;*/
+  border-radius: 3px;
+  width: 120px;
   text-align: center;
-  display:inline;
   background-color: black;
   font-weight: bold;
   color:white;
