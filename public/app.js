@@ -12,8 +12,13 @@ $(document).ready(function(){
     $('#meetingTable').on('click', 'td', function(e){
             e.stopPropagation();
             $('#meeting').focus();
+            var text = $(this).text();
+            console.log($(this).text());
+            var text2= text.substr(0, text.indexOf('   '));
+            console.log(text2);
+            $('#meeting').val(text2);
             let miau = $(this).data("time").toString();
-            let miau2 = ($(this).data("time")+1).toString()
+            let miau2 = ($(this).data("time")+1).toString();
             $('#dropdown1').val(miau).change();
             $('#dropdown2').val(miau2).change();
         });
@@ -214,7 +219,7 @@ $(document).ready(function(){
     function meetingTable() {
         for(var i=9; i<=18; i++)
           {
-            $("#meetingTable").append("<tr><td>"+i+""+"</td><td id=time"+i+"></td></tr>");
+            $("#meetingTable").append("<tr><td class=meetingTableTime>"+i+""+"</td><td class=miau id=time"+i+"></td></tr>");
             $("#time"+i).data("time", i);
             console.log("Comming from meetingTable(): " + $("#time"+i).data("time"));
           }

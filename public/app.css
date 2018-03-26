@@ -57,6 +57,9 @@ p{
 td:hover { 
     background-color: #f3fdf9;
 }
+.meetingTableTime{
+    width: 30px;
+}
 .elementChange {
     margin: auto;
     text-align: center;
