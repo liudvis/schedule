@@ -14,7 +14,7 @@ $(document).ready(function(){
             $('#meeting').focus();
             var text = $(this).text();
             console.log($(this).text());
-            var text2= text.substr(0, text.indexOf('   '));
+            var text2= text.substr(0, text.indexOf('  '));
             console.log(text2);
             $('#meeting').val(text2);
             let miau = $(this).data("time").toString();
@@ -23,6 +23,7 @@ $(document).ready(function(){
             $('#dropdown2').val(miau2).change();
         });
       $('.list,#meetingTable').on('click', 'option', function(e){
+          e.stopPropagation();
             var element = $($(this).parent().parent().parent());
             if($(this).val()==0){
                     element.html('<div>Moved to Tomorrow <i class="check icon"></i></div>');
@@ -37,7 +38,7 @@ $(document).ready(function(){
                     console.log(element);
                     });
             }
-            e.stopPropagation();
+            
           });
     $('#task').keypress(function(event){
         if(event.keyCode===13){
