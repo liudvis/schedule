@@ -20,6 +20,12 @@ var scheduleSchema = new mongoose.Schema({
     day: {
         type: Number,
         required: 'specify a day'
+    },
+    meetingStart: {
+        type:Number,
+    },
+    meetingEnd: {
+        type:Number,
     }
 });
 

@@ -24,25 +24,25 @@
       <input type="text" placeholder="Add a meeting here.." id="meeting" name="empty">
       <select class="ui compact selection dropdown"  id="dropdown1" name="empty1">
           <option value="">Start</option>
-          <option value="0">9:00</option>
-          <option value="1">10:00</option>
-          <option value="2">11:00</option>
-          <option value="3">13:00</option>
-          <option value="4">14:00</option>
-          <option value="5">15:00</option>
-          <option value="6">16:00</option>
-          <option value="7">17:00</option>
+          <option value="0">9</option>
+          <option value="1">10</option>
+          <option value="2">11</option>
+          <option value="3">13</option>
+          <option value="4">14</option>
+          <option value="5">15</option>
+          <option value="6">16</option>
+          <option value="7">17</option>
       </select>
         <select class="ui compact selection dropdown"  id="dropdown2" name="empty2">
           <option value="">End</option>
-          <option value="0">10:00</option>
-          <option value="1">11:00</option>
-          <option value="2">12:00</option>
-          <option value="3">14:00</option>
-          <option value="4">15:00</option>
-          <option value="5">16:00</option>
-          <option value="6">17:00</option>
-          <option value="7">18:00</option>
+          <option value="0">10</option>
+          <option value="1">11</option>
+          <option value="2">12</option>
+          <option value="3">14</option>
+          <option value="4">15</option>
+          <option value="5">16</option>
+          <option value="6">17</option>
+          <option value="7">18</option>
         </select>
       <div class="ui primary icon button" id='submit1'><i class="plus icon"></i>
 </div>
@@ -78,8 +78,10 @@
 
 <div class="ui grid" id="lists">
   <div class="ten wide column">    
-        <div class="ui divided list" id="list1">
-     </div>  
+<table class="ui unstackable table" id="meetingTable"> 
+  <tbody>
+  </tbody>
+</table>
     </div>
   <div class="six wide column">
         <div class="ui divided list" id="list2">

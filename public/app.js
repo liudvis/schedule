@@ -9,7 +9,7 @@ $(document).ready(function(){
             e.stopPropagation();
 
         });
-      $('.list').on('click', 'option', function(e){
+      $('.list,#meetingTable').on('click', 'option', function(e){
             var element = $($(this).parent().parent().parent());
             if($(this).val()==0){
                     element.html('<div>Moved to Tomorrow <i class="check icon"></i></div>');
@@ -21,6 +21,7 @@ $(document).ready(function(){
                     element.html('<div>Deleted  <div class="divcheck"><i class="check icon"></div></i></div>');
                     element.addClass('elementChange').delay(1000).slideUp(700,function(){
                     deleteSchedule(element);
+                    console.log(element);
                     });
             }
             e.stopPropagation();
@@ -81,7 +82,8 @@ $(document).ready(function(){
             if(schedule.type==="meeting"){
                 var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
                 newMeeting.data('id', schedule._id);
-                $('#list1').append(newMeeting);
+                // $('#time'+schedule.meetingStart).text();
+                $('#time'+schedule.meetingStart).html(schedule.name+ddnButton(schedule));
                 $('#dropdown1').val('');
                 $('#dropdown2').val('');
             } else if (schedule.type==="todo"){
@@ -109,12 +111,13 @@ $(document).ready(function(){
     }
     
         function createMeeting(day){
-        var timeInput = $('#dropdown1 option:selected').text()+"-"+$('#dropdown2 option:selected').text();
-        var userInput = '<span class="meetingTimeDisplay">'+timeInput+'</span>'+$('#meeting').val();
+        var startOfTheMeeting = $('#dropdown1 option:selected').text();
+        var endOfTheMeeting = $('#dropdown2 option:selected').text();
+        var userInput = $('#meeting').val();
         if(userInput=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End") {
             $('#meetingInput').effect("shake");
         } else {
-        $.post('/api/schedules',{name: userInput, type: "meeting", day: day})
+        $.post('/api/schedules',{name: userInput, type: "meeting", day: day, meetingStart: startOfTheMeeting, meetingEnd: endOfTheMeeting})
         .then(function(newMeeting){
             addSchedule(newMeeting);
             $('#meeting').val('');
@@ -192,10 +195,19 @@ $(document).ready(function(){
           $("#demo1").text("The " +p+" of March");
           $("#demo").show("fast");
           $(".list").show("fast");
+          meetingTable();
           $('#list1').append('<div class="header">Meetings</div>');
           $('#list2').append('<div class="header">Tasks</div>');
           return p;
     }
+    function meetingTable() {
+        for(var i=9; i<=18; i++)
+          {
+            $("#meetingTable").append("<tr><td>"+i+""+"</td><td id=time"+i+"></td></tr>");
+            $("#time"+i).data("time", i);
+            console.log("Comming from meetingTable(): " + $("#time"+i).data("time"));
+          }
+  }
     function todaysDate(){
         var today = new Date();
         var dd = today.getDate();
@@ -219,5 +231,6 @@ $(document).ready(function(){
         $("#demo").hide("fast");
         $(".list").hide("fast");
         $(".list").empty();
+        $("#meetingTable").empty();
     }
 });
