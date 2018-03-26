@@ -82,8 +82,7 @@ $(document).ready(function(){
             if(schedule.type==="meeting"){
                 var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
                 newMeeting.data('id', schedule._id);
-                // $('#time'+schedule.meetingStart).text();
-                $('#time'+schedule.meetingStart).html(schedule.name+ddnButton(schedule));
+                $('#time'+schedule.meetingStart).html(newMeeting);
                 $('#dropdown1').val('');
                 $('#dropdown2').val('');
             } else if (schedule.type==="todo"){
