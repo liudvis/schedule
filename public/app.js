@@ -9,6 +9,14 @@ $(document).ready(function(){
             e.stopPropagation();
 
         });
+    $('#meetingTable').on('click', 'td', function(e){
+            e.stopPropagation();
+            $('#meeting').focus();
+            let miau = $(this).data("time").toString();
+            let miau2 = ($(this).data("time")+1).toString()
+            $('#dropdown1').val(miau).change();
+            $('#dropdown2').val(miau2).change();
+        });
       $('.list,#meetingTable').on('click', 'option', function(e){
             var element = $($(this).parent().parent().parent());
             if($(this).val()==0){
@@ -82,7 +90,11 @@ $(document).ready(function(){
             if(schedule.type==="meeting"){
                 var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
                 newMeeting.data('id', schedule._id);
-                $('#time'+schedule.meetingStart).html(newMeeting);
+                for(var i=schedule.meetingStart; i<schedule.meetingEnd; i++){
+                    $('#time'+i).html(newMeeting);
+                }
+                // $('#time'+schedule.meetingEnd).html(newMeeting);
+                // $('#time'+schedule.meetingStart).html(newMeeting);
                 $('#dropdown1').val('');
                 $('#dropdown2').val('');
             } else if (schedule.type==="todo"){
