@@ -13,13 +13,20 @@ $(document).ready(function(){
             console.log($(this).data());
                 if($(this).data("empty")==true){
                     $('#meeting').focus();
+                    $("#meeting").val("");
                     let time = $(this).data("time");
                     $('#dropdown1').val(time).change();
                     $('#dropdown2').val(time+1).change();                
                 }
-            
-        
-
+                else if($(this).data("empty")==false){
+                    $('#meeting').focus();
+                    $.getJSON("/api/schedules/"+$(this).data("id"))
+                        .then(function(edit){
+                            $("#meeting").val(edit.name);
+                            $('#dropdown1').val(edit.meetingStart).change();
+                            $('#dropdown2').val(edit.meetingEnd).change(); 
+                        });
+                }
     //         $('#meeting').keypress(function(event){
     //         if(event.keyCode===13){
     //         updateMeeting($(this));
@@ -79,8 +86,8 @@ $(document).ready(function(){
                     }
                     deleteSchedule(element);
                     $('#meeting').val("");
-                    $('#dropdown1').val('').change();//Doesnt work
-                    $('#dropdown2').val('').change();
+                    $('#dropdown1').val(0).change();//Doesnt work
+                    $('#dropdown2').val(0).change();
                 
           });
             }
