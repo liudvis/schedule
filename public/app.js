@@ -2,62 +2,55 @@
 $(document).ready(function(){
     fillCalendar();
     hidingElements();
-    var selected =0;
+    var selected;
     $('#DDN').dropdown();
       $('#list2').on('click', 'div', function(e){
-            ($(this)).toggleClass('done', 200);
+            ($(this)).toggleClass('done', 200);         //WORKS!
             e.stopPropagation();
-
         });
     $('#meetingTable').on('click', 'td', function(e){
             e.stopPropagation();
-            $('#meeting').focus();
-            var text = $(this).text();
-            console.log($(this).text());
-            var text2= text.substr(0, text.indexOf('  '));
-            console.log(text2);
-            $('#meeting').val(text2);
-            let miau = $(this).data("time").toString();
-            let miau2 = ($(this).data("time")+1).toString();
-            $('#dropdown1').val(miau).change();
-            $('#dropdown2').val(miau2).change();
-        });
-      $('.list,#meetingTable').on('click', 'option', function(e){
-          e.stopPropagation();
-            var element = $($(this).parent().parent().parent());
-            if($(this).val()==0){
-                    element.html('<div>Moved to Tomorrow <i class="check icon"></i></div>');
-                    element.addClass('elementChange').delay(1000).slideUp(700,function(){
-                    updateTodo(element);
-                    });
-            }
-            else if($(this).val()==2){
-                    element.html('<div>Deleted  <div class="divcheck"><i class="check icon"></div></i></div>');
-                    element.addClass('elementChange').delay(1000).slideUp(700,function(){
-                    deleteSchedule(element);
-                    console.log(element);
-                    });
-            }
+            console.log($(this).data());
+                if($(this).data("empty")==true){
+                    $('#meeting').focus();
+                    let time = $(this).data("time");
+                    $('#dropdown1').val(time).change();
+                    $('#dropdown2').val(time+1).change();                
+                }
             
-          });
+        
+
+    //         $('#meeting').keypress(function(event){
+    //         if(event.keyCode===13){
+    //         updateMeeting($(this));
+    //             }
+    //         });
+    //         $("#submit1").on("click", function(){
+    //         updateMeeting($(this));
+    //             });
+        });
+    $('.list,#meetingTable').on('click', 'option', function(e){
+        e.stopPropagation();
+        dropdownDeleteAndMoveToTomorrow($(this));    //WORKS!
+      });
     $('#task').keypress(function(event){
         if(event.keyCode===13){
-        createTodo(selected);
+        createTodo(selected);                       //WORKS!
         }
     });
     $('#meeting').keypress(function(event){
         if(event.keyCode===13){
-        createMeeting(selected);
+        createMeeting(selected);                    //WORKS!
         }
     });
     $("#submit1").on("click", function(){
-        createMeeting(selected);
+        createMeeting(selected);                    //WORKS!
         });
     $("#smallcalendar").on("click", function(){
-        smallCalendarPopup();
+        smallCalendarPopup();                       //  WORKS!
         });
     $("#calendar").on("click", "td", function() {
-        selected = chosenDate(this);
+        selected = chosenDate(this);                //WORKS!
         $.getJSON("/api/schedules")
         .then(addSchedules);
         });
@@ -67,6 +60,31 @@ $(document).ready(function(){
             schedules.forEach(function(schedule){
                 addSchedule(schedule);
             });
+        }
+        function dropdownDeleteAndMoveToTomorrow(arg){
+            var element = arg.parent().parent().parent();
+            if(arg.val()==0){
+                    element.html('<div>Moved to Tomorrow <i class="check icon"></i></div>');
+                    element.addClass('elementChange').delay(1000).slideUp(700,function(){
+                    updateTodo(element);
+                    });
+            }
+            else if(arg.val()==2){             
+                    element.html('<div>Deleted  <div class="divcheck"><i class="check icon"></div></i></div>');
+                    element.addClass('elementChange').delay(1000).slideUp(700,function(){
+                    for(var i=element.data("startTime"); i<element.data("endTime"); i++){
+                        $('#time'+i).css("background-color", "white");
+                        $('#time'+i).data("empty", true);
+                        $('#time'+i).data("id", null);
+                    }
+                    deleteSchedule(element);
+                    $('#meeting').val("");
+                    $('#dropdown1').val('').change();//Doesnt work
+                    $('#dropdown2').val('').change();
+                
+          });
+            }
+            
         }
         function ddnButton (schedule) {
             if(schedule.type==="todo"){
@@ -96,17 +114,21 @@ $(document).ready(function(){
             if(schedule.type==="meeting"){
                 var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
                 newMeeting.data('id', schedule._id);
+                newMeeting.data('startTime', schedule.meetingStart);
+                newMeeting.data('endTime', schedule.meetingEnd);
                 for(var i=schedule.meetingStart; i<schedule.meetingEnd; i++){
-                    $('#time'+i).html(newMeeting);
+                    $('#time'+i).css("background-color", "#f1ddf2");
+                    $('#time'+i).data('empty', false);
+                    $('#time'+i).data('id', schedule._id);
                 }
-                // $('#time'+schedule.meetingEnd).html(newMeeting);
-                // $('#time'+schedule.meetingStart).html(newMeeting);
+                $('#time'+schedule.meetingStart).html(newMeeting);
+
                 $('#dropdown1').val('');
                 $('#dropdown2').val('');
             } else if (schedule.type==="todo"){
                 var newTodo =  $('<div class="item">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");
                 newTodo.data('id', schedule._id);
-                newTodo.data('day', schedule.day);
+                newTodo.data('empty', false);
                 $('#list2').append(newTodo);
             }
             }       
@@ -122,19 +144,29 @@ $(document).ready(function(){
             $('#task').val('');
         })
         .catch(function(err){
-            console.log(err);
+            alert(err);
         });
     }
     }
+                function checkingTime(startOfTheMeeting, endOfTheMeeting){
+                    for(var i=startOfTheMeeting; i<endOfTheMeeting; i++){
+                        if($('#time'+i).data('empty')==false){
+                            console.log(i);
+                            return false;
+                }
+                }
+                    return true;
+                }
     
         function createMeeting(day){
         var startOfTheMeeting = $('#dropdown1 option:selected').text();
         var endOfTheMeeting = $('#dropdown2 option:selected').text();
-        var userInput = $('#meeting').val();
-        if(userInput=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End") {
-            $('#meetingInput').effect("shake");
+        var nameOfTheMeeting = $('#meeting').val();
+        var check = checkingTime(Number(startOfTheMeeting), Number(endOfTheMeeting));
+        if(nameOfTheMeeting=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End" || check==false) {
+                $('#meetingInput').effect("shake");
         } else {
-        $.post('/api/schedules',{name: userInput, type: "meeting", day: day, meetingStart: startOfTheMeeting, meetingEnd: endOfTheMeeting})
+        $.post('/api/schedules',{name: nameOfTheMeeting, type: "meeting", day: day, meetingStart: startOfTheMeeting, meetingEnd: endOfTheMeeting})
         .then(function(newMeeting){
             addSchedule(newMeeting);
             $('#meeting').val('');
@@ -158,7 +190,7 @@ $(document).ready(function(){
             
           })
           .catch(function(err){
-            console.log(err);
+            alert(err);
           });
     }
     function updateTodo(schedule){
@@ -174,6 +206,21 @@ $(document).ready(function(){
           schedule.remove();
           });
     }
+    // function updateMeeting(schedule){
+    //     var updateUrl = '/api/schedules/' + schedule.data('id');
+    //     var meetingName = schedule.name;
+    //     var startTime = schedule.meetingStart;
+    //     var endTime = schedule.meetingEnd;
+    //     var updateData= {name: schedule.name, startTime: schedule.meetingStart, endTime: schedule.meetingEnd};
+    //     $.ajax({
+    //         method: 'PUT',
+    //         url: updateUrl,
+    //         data: updateData
+    //       })
+    //       .then(function(){
+    //       alert("asdasd");
+    //       });
+    // }
     
       function fillCalendar() {
           for (var i=1; i<=31; i++){
@@ -218,11 +265,12 @@ $(document).ready(function(){
           return p;
     }
     function meetingTable() {
-        for(var i=9; i<=18; i++)
+        for(var i=9; i<=17; i++)
           {
             $("#meetingTable").append("<tr><td class=meetingTableTime>"+i+""+"</td><td class=miau id=time"+i+"></td></tr>");
             $("#time"+i).data("time", i);
-            console.log("Comming from meetingTable(): " + $("#time"+i).data("time"));
+            $('#time'+i).data('empty', true);
+            $('#time'+i).data('id', null);
           }
   }
     function todaysDate(){

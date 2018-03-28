@@ -18,6 +18,7 @@
 #meetingInput {
   margin-top: 16.67px; 
 }
+
 #calendar {
   width: 350px;
   margin: auto;
@@ -63,7 +64,7 @@ td:hover {
 .elementChange {
     margin: auto;
     text-align: center;
-    /*background-color: #0A9BD8;*/
+    background-color: inherit;
     /*color: white;*/
 }
 .header {
@@ -73,7 +74,7 @@ td:hover {
 }
 
 .dropbtn {
-    background-color: white;
+    background-color: inherit;
     color: black;
     /*padding: 16px;*/
     font-size: 1em;
@@ -112,5 +113,5 @@ td:hover {
 }
 
 .dropdown:hover .dropbtn {
-    background-color: white;
+    background-color: inherit;
 }
