@@ -40,6 +40,9 @@ $(document).ready(function(){
         e.stopPropagation();
         dropdownDeleteAndMoveToTomorrow($(this));    //WORKS!
       });
+    $('.list,#meetingTable').on('click', '.dropbtn', function(e){
+        e.stopPropagation();
+      });      
     $('#task').keypress(function(event){
         if(event.keyCode===13){
         createTodo(selected);                       //WORKS!
