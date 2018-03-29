@@ -21,7 +21,11 @@ $(document).ready(function(){
             var xujznaet = $('#dropdown1').find(':selected').val();
             console.log(xujznaet);
             for (var i = xujznaet; i <= 18; i++) {
+                if (i==xujznaet){
+                        console.log("pasol nx");
+                } else {
                       arr.push({value: i, name: i});
+                }
             }
                     console.log("2  "+arr);
 
