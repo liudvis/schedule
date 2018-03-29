@@ -14,7 +14,9 @@ $('#dropdown1').dropdown();
 $('#dropdown2').dropdown();
 
     $(document).on('click', function(e) {
-        if (e.target.nodeName === "BODY") {
+        let bybys = e.target.nodeName;
+        console.log(bybys);
+        if (bybys === "DIV") {
             console.log(e.target.nodeName);
             $("#meeting").val("");
             $('.ui.dropdown').dropdown('restore defaults');
