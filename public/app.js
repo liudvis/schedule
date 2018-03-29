@@ -2,90 +2,17 @@
 $(document).ready(function(){
     fillCalendar();
     hidingElements();
+    changingTimes();
     var selected;
     $('#DDN').dropdown();
       $('#list2').on('click', 'div', function(e){
             ($(this)).toggleClass('done', 200);         //WORKS!
             e.stopPropagation();
         });
-        
-        
-//         $("#dropdown2").dropdown().on("click", function() {
-//     getValue();
-//      function getValue(){
-//     $('#dropdown1').dropdown('set values', 12);
-// }            });
-    $('#dropdown1').dropdown({
-        onChange: function(value, $choise){
-            var arr= [];
-            var xujznaet = $('#dropdown1').find(':selected').val();
-            console.log(xujznaet);
-            for (var i = xujznaet; i <= 18; i++) {
-                if (i==xujznaet){
-                        console.log("pasol nx");
-                } else {
-                      arr.push({value: i, name: i});
-                }
-            }
-                    console.log("2  "+arr);
+$('#dropdown1').dropdown();
 
-    // arr[arr.length - 1].selected = true;
-    $('#dropdown2')
-    	.dropdown('change values', arr);
-  }
-});
-// $('#dropdown2').dropdown({
-//             onChange: function(value, $choise){
-//             var arr= [];
-//             var xujznaet = $('#dropdown2').find(':selected').val();
-//             console.log(xujznaet);
-//             for (var i = 9; i <= xujznaet; i++) {
-//                 if (i==xujznaet){
-//                         console.log("pasol nx");
-//                 } else {
-//                       arr.push({value: i, name: i});
-//                 }
-//             }
-//                     console.log("2  "+arr);
+$('#dropdown2').dropdown();
 
-//     // arr[arr.length - 1].selected = true;
-//     $('#dropdown1')
-//     	.dropdown('change values', arr);
-//   }
-// });
-$('#dropdown2')
-    	.dropdown();
-//     $('.ui.dropdown.year').dropdown({
-//   onChange: function (value, text, $choice) {
-//     var arr = [];
-//     var months = $('#year').find(':selected').data('month');
-//     for (var i = 0; i < months.length; i++) {
-//       var m = months[i];
-//       arr.push({value: m, name: m});
-//     }
-//     arr[arr.length - 1].selected = true;
-//     $('.ui.dropdown.month')
-//     	.dropdown('change values', arr);
-//   }
-// });
-// $('.ui.dropdown.month').dropdown({
-//   onChange: function (value, text, $choice) {
-//     console.log(value)
-//   }
-// });
-
-        // $('#dropdown1').change(function() {
-        //     var miau = $('#dropdown1 option:selected').val();
-        //     console.log(miau);
-        //     for (var i=10; i<=miau; i++){
-        //             // $("#dropdown2 option[value=" + i + "]").text("asds").change();
-        //             // $("#dropdown2 option[value=" + i + "]").val("asds").change();
-        //                 console.log($("#dropdown2 option[value=" + i + "]").val());                                    
-        //                 $("#dropdown2").dropdown('remove selected', i);
-
-        //     }
-
-    // });
     $(document).on('click', function(e) {
         if (e.target.nodeName === "BODY") {
             console.log(e.target.nodeName);
@@ -100,8 +27,10 @@ $('#dropdown2')
                     $('#meeting').focus();
                     $("#meeting").val("");
                     let time = $(this).data("time");
-                    $('#dropdown1').val(time).change();
-                    $('#dropdown2').val(time+1).change();                
+                    $('#dropdown1').dropdown('set selected', time);
+                    $('#dropdown2').dropdown('set selected', time+1);
+                    changingTimes();
+
                 }
                 else if($(this).data("empty")==false){
                     $('#meeting').focus();
@@ -120,11 +49,6 @@ $('#dropdown2')
                 }
                         
         });
-    //         });
-    //         $("#submit1").on("click", function(){
-    //         updateMeeting($(this));
-    //             });
-
     $('.list,#meetingTable').on('click', 'option', function(e){
         e.stopPropagation();
         dropdownDeleteAndMoveToTomorrow($(this));    //WORKS!
@@ -153,7 +77,25 @@ $('#dropdown2')
         $.getJSON("/api/schedules")
         .then(addSchedules);
         });
-        
+        function changingTimes () {
+            $('#dropdown1').dropdown({ onChange: function(value, $choise){
+                var arr= [];
+                var xujznaet = $('#dropdown1').dropdown('get value');
+                    if(xujznaet==""){
+                        xujznaet=10;
+                    }
+                console.log(xujznaet);
+                    for (var i = xujznaet; i <= 18; i++) {
+                        if (i==xujznaet){
+                                console.log("pasol nx");
+                        } else {
+                              arr.push({value: i, name: i});
+                        }
+                    }
+    $('#dropdown2').dropdown('change values', arr);
+  }
+});
+        }
         function addSchedules(schedules){
             schedules.forEach(function(schedule){
                 addSchedule(schedule);
