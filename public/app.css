@@ -72,6 +72,10 @@ td:hover {
   text-align: center;
   font-weight: bold;
 }
+.hideElement{
+  display: none;
+  color:red;
+}
 
 .dropbtn {
     background-color: inherit;
