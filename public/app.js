@@ -16,7 +16,7 @@ $('#dropdown2').dropdown();
     $(document).on('click', function(e) {
         let bybys = e.target.nodeName;
         console.log(bybys);
-        if (bybys === "DIV"|| bybys === "BODY"||bybys === "H4") {
+        if (/*bybys === "DIV"||*/ bybys === "BODY"||bybys === "H4") {
             console.log(e.target.nodeName);
             $("#meeting").val("");
             $('.ui.dropdown').dropdown('restore defaults');
@@ -200,11 +200,14 @@ $('#dropdown2').dropdown();
                 }
     
         function createMeeting(day){
-        var startOfTheMeeting = $('#dropdown1 option:selected').text();
-        $("#dropdown2").children('option[value="12"]').hide();
+        var startOfTheMeeting = $('#dropdown1').dropdown('get value');
+        // console.log("miau miaju" + startOfTheMeeting);
+        // $('#dropdown1').dropdown('set selected', startOfTheMeeting);
+        changingTimes();
 
-
-        var endOfTheMeeting = $('#dropdown2 option:selected').text();
+        var endOfTheMeeting = $('#dropdown2').find(":selected").val();
+        // console.log("miau miau"+endOfTheMeeting);
+                    // $('#dropdown2').dropdown('set selected', endOfTheMeeting);
         var nameOfTheMeeting = $('#meeting').val();
         var check = checkingTime(Number(startOfTheMeeting), Number(endOfTheMeeting));
         if(nameOfTheMeeting=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End" || check==false) {
