@@ -34,8 +34,27 @@ $(document).ready(function(){
     	.dropdown('change values', arr);
   }
 });
-$('#dropdown2').dropdown();
+// $('#dropdown2').dropdown({
+//             onChange: function(value, $choise){
+//             var arr= [];
+//             var xujznaet = $('#dropdown2').find(':selected').val();
+//             console.log(xujznaet);
+//             for (var i = 9; i <= xujznaet; i++) {
+//                 if (i==xujznaet){
+//                         console.log("pasol nx");
+//                 } else {
+//                       arr.push({value: i, name: i});
+//                 }
+//             }
+//                     console.log("2  "+arr);
 
+//     // arr[arr.length - 1].selected = true;
+//     $('#dropdown1')
+//     	.dropdown('change values', arr);
+//   }
+// });
+$('#dropdown2')
+    	.dropdown();
 //     $('.ui.dropdown.year').dropdown({
 //   onChange: function (value, text, $choice) {
 //     var arr = [];
