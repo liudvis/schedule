@@ -131,12 +131,15 @@ $(document).ready(function(){
         function dropdownDeleteAndMoveToTomorrow(arg){
             var element = arg.parent().parent().parent();
             if(arg.val()==0){
+                console.log("Coming from function ddn: "+element)
                     element.html('<div>Moved to Tomorrow <i class="check icon"></i></div>');
                     element.addClass('elementChange').delay(1000).slideUp(700,function(){
                     updateTodo(element);
                     });
             }
-            else if(arg.val()==2){             
+            else if(arg.val()==2){          
+                                console.log("Coming from function ddn: "+element)
+
                     element.html('<div>Deleted  <div class="divcheck"><i class="check icon"></div></i></div>');
                     element.addClass('elementChange').delay(1000).slideUp(700,function(){
                     for(var i=element.data("startTime"); i<element.data("endTime"); i++){
@@ -270,15 +273,16 @@ $(document).ready(function(){
     }
     function updateTodo(schedule){
           var updateUrl = '/api/schedules/' + schedule.data('id');
-          var day=schedule.data('day');
-          var updateData ={day: day+1};
+          var day=schedule.day;
+          console.log(selected)
+          var updateData ={day: selected+1};
           $.ajax({
             method: 'PUT',
             url: updateUrl,
             data: updateData
           })
           .then(function(){
-          schedule.remove();
+            schedule.remove();
           });
     }
     // function updateMeeting(schedule){
