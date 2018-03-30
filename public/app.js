@@ -9,18 +9,19 @@ $(document).ready(function(){
             ($(this)).toggleClass('done', 200);         //WORKS!
             e.stopPropagation();
         });
-$('#dropdown1').dropdown();
-
-$('#dropdown2').dropdown();
+        $('#dropdown1').dropdown();
+        
+        $('#dropdown2').dropdown();
 
     $(document).on('click', function(e) {
         let bybys = e.target.nodeName;
         console.log(bybys);
-        if (/*bybys === "DIV"||*/ bybys === "BODY"||bybys === "H4") {
-            console.log(e.target.nodeName);
-            $("#meeting").val("");
-            $('.ui.dropdown').dropdown('restore defaults');
-        }
+        // console.log(bybys);
+        // if (/*bybys === "DIV"||*/ bybys === "BODY"||bybys === "H4") {
+        //     console.log(e.target.nodeName);
+        //     $("#meeting").val("");
+        //     $('.ui.dropdown').dropdown('restore defaults');
+        // }
     });
     $('#meetingTable').on('click', 'td', function(e){
             e.stopPropagation();
@@ -31,8 +32,6 @@ $('#dropdown2').dropdown();
                     let time = $(this).data("time");
                     $('#dropdown1').dropdown('set selected', time);
                     $('#dropdown2').dropdown('set selected', time+1);
-                    changingTimes();
-
                 }
                 else if($(this).data("empty")==false){
                     $('#meeting').focus();
@@ -79,6 +78,32 @@ $('#dropdown2').dropdown();
         $.getJSON("/api/schedules")
         .then(addSchedules);
         });
+        $("#demo1").on("click", "i", function(e) {
+                e.stopPropagation();
+                if(this.id=="changeToTomorrow"){
+                    selected++;
+                    $("#demo").text(selected);
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    $(".list").empty();
+                    $("#meetingTable").empty();
+                    meetingTable();
+                    $.getJSON("/api/schedules")
+                    .then(addSchedules);
+        }
+        else if (this.id=="changeToYesterday"){
+                    selected--;
+                    $("#demo").text(selected);
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    $(".list").empty();
+                    $("#meetingTable").empty();
+                    meetingTable();
+                    $.getJSON("/api/schedules")
+                    .then(addSchedules);
+        } else {
+            console.log("nx");
+        }
+        });
+    
         function changingTimes () {
             $('#dropdown1').dropdown({ onChange: function(value, $choise){
                 var arr= [];
@@ -150,6 +175,13 @@ $('#dropdown2').dropdown();
             return ddnMeeting;}
             
         }
+        function colors () {
+            var arr =["#f1ddf2", "#fff6ec", "#e7ebec", "#eafeec", "#eaeed2", "#eadcd2", "#cadcd2", "#cac8d2", "#b9c8d2", "#b9b3d2"];
+            var i = Math.floor(Math.random() * Math.floor(arr.length));
+            console.log(arr[i]);
+            return arr[i];
+        }
+        
         function addSchedule(schedule){
             if(selected == schedule.day){
             if(schedule.type==="meeting"){
@@ -158,7 +190,6 @@ $('#dropdown2').dropdown();
                 newMeeting.data('startTime', schedule.meetingStart);
                 newMeeting.data('endTime', schedule.meetingEnd);
                 for(var i=schedule.meetingStart; i<schedule.meetingEnd; i++){
-                    $('#time'+i).css("background-color", "#f1ddf2");
                     $('#time'+i).data('empty', false);
                     $('#time'+i).data('id', schedule._id);
                 }
@@ -203,11 +234,9 @@ $('#dropdown2').dropdown();
         var startOfTheMeeting = $('#dropdown1').dropdown('get value');
         // console.log("miau miaju" + startOfTheMeeting);
         // $('#dropdown1').dropdown('set selected', startOfTheMeeting);
-        changingTimes();
 
         var endOfTheMeeting = $('#dropdown2').find(":selected").val();
-        // console.log("miau miau"+endOfTheMeeting);
-                    // $('#dropdown2').dropdown('set selected', endOfTheMeeting);
+
         var nameOfTheMeeting = $('#meeting').val();
         var check = checkingTime(Number(startOfTheMeeting), Number(endOfTheMeeting));
         if(nameOfTheMeeting=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End" || check==false) {
@@ -308,7 +337,7 @@ $('#dropdown2').dropdown();
           $("#field2").show("fast");
           $("#smallcalendar").show("fast");
           $("#demo").text(p);
-          $("#demo1").text("The " +p+" of March");
+          $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +p+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
           $("#demo").show("fast");
           $(".list").show("fast");
           meetingTable();

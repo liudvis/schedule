@@ -23,6 +23,10 @@
   width: 350px;
   margin: auto;
 }
+#miau {
+  text-align: center;
+      font-size: 1.2em;
+}
 p{
   text-align: center;
 }
