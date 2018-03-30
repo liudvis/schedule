@@ -80,7 +80,7 @@ $(document).ready(function(){
         });
         $("#demo1").on("click", "i", function(e) {
                 e.stopPropagation();
-                if(this.id=="changeToTomorrow"){
+                if(this.id=="changeToTomorrow" && selected<31){
                     selected++;
                     $("#demo").text(selected);
                     $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
@@ -90,7 +90,7 @@ $(document).ready(function(){
                     $.getJSON("/api/schedules")
                     .then(addSchedules);
         }
-        else if (this.id=="changeToYesterday"){
+        else if (this.id=="changeToYesterday" && selected>1){
                     selected--;
                     $("#demo").text(selected);
                     $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
@@ -345,11 +345,12 @@ $(document).ready(function(){
           $("#demo").show("fast");
           $(".list").show("fast");
           meetingTable();
-          $('#list1').append('<div class="header">Meetings</div>');
-          $('#list2').append('<div class="header">Tasks</div>');
           return p;
     }
     function meetingTable() {
+                  $('#list2').append('<div class="header">Tasks</div>');
+
+        $('#meetingTable').append('<thead class="full-width"><tr><th colspan="2" id = "miau"><div>Meetings</div></th></tr></thead>');
         for(var i=9; i<=17; i++)
           {
             $("#meetingTable").append("<tr><td class=meetingTableTime>"+i+""+"</td><td class=miau id=time"+i+"></td></tr>");
