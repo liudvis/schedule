@@ -12,6 +12,22 @@ $(document).ready(function(){
         $('#dropdown1').dropdown();
         
         $('#dropdown2').dropdown();
+    
+     // Bind the swipeleftHandler callback function to the swipe event on div.box
+    $( "#lists" ).on( "swipeleft", swipeleftHandler );
+ 
+  // Callback function references the event target and adds the 'swipeleft' class to it
+     function swipeleftHandler( event ){
+                            selected--;
+                    $("#demo").text(selected);
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    $(".list").empty();
+                    $("#meetingTable").empty();
+                    meetingTable();
+                    $.getJSON("/api/schedules")
+                    .then(addSchedules);
+      }
+    });
 
     $(document).on('click', function(e) {
         let bybys = e.target.nodeClass;
@@ -35,11 +51,11 @@ $(document).ready(function(){
                 else if($(this).data("empty")==false){
                     e.stopImmediatePropagation();
                     $('#meeting').focus();
-                    $.getJSON("/api/schedules/"+$(this).data("id"))
-                        .then(function(edit){
-                            $("#meeting").val(edit.name);
-                            $('#dropdown1').val(edit.meetingStart).change();
-                            $('#dropdown2').val(edit.meetingEnd).change();
+                    // $.getJSON("/api/schedules/"+$(this).data("id"))
+                    //     .then(function(edit){
+                    //         $("#meeting").val(edit.name);
+                    //         $('#dropdown1').val(edit.meetingStart).change();
+                    //         $('#dropdown2').val(edit.meetingEnd).change();
                         //                 $('#meeting').keypress(function(event){
                         //                     if(event.keyCode===13){
                         //                     event.stopImmediatePropagation();
@@ -48,7 +64,7 @@ $(document).ready(function(){
                         //                     }
                         // });
                         
-                                        });
+                                        // });
                 }
                         
         });
