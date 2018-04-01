@@ -12,9 +12,6 @@ $(document).ready(function(){
         $('#dropdown1').dropdown();
         
         $('#dropdown2').dropdown();
-    
-     // Bind the swipeleftHandler callback function to the swipe event on div.box
-    $( "#lists" ).on( "swipeleft", swipeleftHandler );
 
     $(document).on('click', function(e) {
         let bybys = e.target.nodeClass;
@@ -109,16 +106,6 @@ $(document).ready(function(){
             console.log("nx");
         }
         });
-         function swipeleftHandler( event ){
-                            selected--;
-                    $("#demo").text(selected);
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-                    $(".list").empty();
-                    $("#meetingTable").empty();
-                    meetingTable();
-                    $.getJSON("/api/schedules")
-                    .then(addSchedules);
-      }
         function changingTimes () {
             $('#dropdown1').dropdown({ onChange: function(value, $choise){
                 var arr= [];
