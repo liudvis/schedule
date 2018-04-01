@@ -14,7 +14,7 @@ $(document).ready(function(){
         $('#dropdown2').dropdown();
 
     $(document).on('click', function(e) {
-        let bybys = e.target.nodeName;
+        let bybys = e.target.nodeClass;
         console.log(bybys);
         // console.log(bybys);
         // if (/*bybys === "DIV"||*/ bybys === "BODY"||bybys === "H4") {
@@ -24,7 +24,6 @@ $(document).ready(function(){
         // }
     });
     $('#meetingTable').on('click', 'td', function(e){
-            e.stopPropagation();
             console.log($(this).data());
                 if($(this).data("empty")==true){
                     $('#meeting').focus();
@@ -34,6 +33,7 @@ $(document).ready(function(){
                     $('#dropdown2').dropdown('set selected', time+1);
                 }
                 else if($(this).data("empty")==false){
+                    e.stopImmediatePropagation();
                     $('#meeting').focus();
                     $.getJSON("/api/schedules/"+$(this).data("id"))
                         .then(function(edit){
@@ -42,7 +42,9 @@ $(document).ready(function(){
                             $('#dropdown2').val(edit.meetingEnd).change();
                         //                 $('#meeting').keypress(function(event){
                         //                     if(event.keyCode===13){
-                        //                     updateMeeting(edit);
+                        //                     event.stopImmediatePropagation();
+                        //                     // updateMeeting(edit);
+                        //                     alert("miau");
                         //                     }
                         // });
                         
@@ -64,6 +66,7 @@ $(document).ready(function(){
     });
     $('#meeting').keypress(function(event){
         if(event.keyCode===13){
+            console.log("create meeting!");
         createMeeting(selected);                    //WORKS!
         }
     });
@@ -336,7 +339,7 @@ $(document).ready(function(){
           var  p = ($( day ).text());
           selected = p;
           $(day).toggleClass("changetd");
-        $("#calendar").transition('scale');
+          $("#calendar").transition('scale');
           $("#meetingInput").show("fast");
           $("#field2").show("fast");
           $("#smallcalendar").show("fast");
@@ -348,8 +351,7 @@ $(document).ready(function(){
           return p;
     }
     function meetingTable() {
-                  $('#list2').append('<div class="header">Tasks</div>');
-
+        $('#list2').append('<div class="header">Tasks</div>');
         $('#meetingTable').append('<thead class="full-width"><tr><th colspan="2" id = "miau"><div>Meetings</div></th></tr></thead>');
         for(var i=9; i<=17; i++)
           {
@@ -364,14 +366,13 @@ $(document).ready(function(){
         var dd = today.getDate();
         var mm = today.getMonth()+1; //January is 0!
         var yyyy = today.getFullYear();
-        if(dd<10) {
-            dd = '0'+dd;
-        } 
+        
         if(mm<10) {
             mm = '0'+mm;
         } 
         today = mm + '/' + dd + '/' + yyyy;
         $("#td"+dd).css({'background':'rgb(184, 219, 232)'});
+        console.log("todays date: " + dd);
         return dd;
     }
     function smallCalendarPopup () {
@@ -383,5 +384,6 @@ $(document).ready(function(){
         $(".list").hide("fast");
         $(".list").empty();
         $("#meetingTable").empty();
+        $("#demo1").html('<i class="calendar alternate outline icon"></i>');
     }
 });
