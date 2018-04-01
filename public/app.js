@@ -338,15 +338,23 @@ $(document).ready(function(){
           var  p = ($( day ).text());
           selected = p;
           $(day).toggleClass("changetd");
-          $("#calendar").transition('scale');
-          $("#meetingInput").show("fast");
-          $("#field2").show("fast");
-          $("#smallcalendar").show("fast");
-          $("#demo").text(p);
+        $("#calendar").transition({
+        animation  : 'fade',
+        duration   : '0.4s',
+         onComplete : function() {
+           $("#meetingInput").transition("fade down");
+           $("#field2").transition("fade down");
+           $(".list").transition("fade down");
+           meetingTable().transition("fade down");
+           $("#smallcalendar").transition("fade down");
+                     $("#demo").text(p);
           $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +p+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-          $("#demo").show("fast");
-          $(".list").show("fast");
-          meetingTable();
+          $("#demo").transition("fade down");
+    }
+  })
+;         
+
+
           return p;
     }
     function meetingTable() {
@@ -375,7 +383,14 @@ $(document).ready(function(){
         return dd;
     }
     function smallCalendarPopup () {
-        $("#calendar").transition('scale');
+        $("#calendar").transition({
+    animation  : 'scale',
+    duration   : '0.5s',
+    onComplete : function() {
+      
+    }
+  })
+;
         $("#meetingInput").hide("fast");
         $("#field2").hide("fast");
         $("#smallcalendar").hide("fast");
