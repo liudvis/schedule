@@ -77,7 +77,9 @@ $(document).ready(function(){
         smallCalendarPopup();                       //  WORKS!
         });
     $("#calendar").on("click", "td", function() {
-        selected = chosenDate(this);                //WORKS!
+        selected = chosenDate(this); 
+
+        //WORKS!
         $.getJSON("/api/schedules")
         .then(addSchedules);
         });
@@ -326,17 +328,20 @@ $(document).ready(function(){
             
         }
     function hidingElements(){
+        meetingTable();
         $("#meetingInput").hide();
         $("#field2").hide();
         $("#smallcalendar").hide();
         $("#demo").hide();
-        $(".list").hide();
+        $("#lists").hide();
         todaysDate();
     }
     function chosenDate(day){
+
           $("td").removeClass("changetd"); 
           var  p = ($( day ).text());
           selected = p;
+          console.log(selected);
           $(day).toggleClass("changetd");
         $("#calendar").transition({
         animation  : 'fade',
@@ -344,17 +349,15 @@ $(document).ready(function(){
          onComplete : function() {
            $("#meetingInput").transition("fade down");
            $("#field2").transition("fade down");
-           $(".list").transition("fade down");
-           meetingTable().transition("fade down");
+           $("#lists").transition("fade down");
            $("#smallcalendar").transition("fade down");
-                     $("#demo").text(p);
+           $("#demo").text(p);
+                      $("#demo").transition("fade down");
           $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +p+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-          $("#demo").transition("fade down");
+        $("#demo1").transition("fade down");
     }
   })
 ;         
-
-
           return p;
     }
     function meetingTable() {
@@ -383,19 +386,21 @@ $(document).ready(function(){
         return dd;
     }
     function smallCalendarPopup () {
-        $("#calendar").transition({
+        $("#meetingInput").transition("fade");
+        $("#field2").transition("fade");
+        $("#smallcalendar").transition("fade");
+        $("#demo").transition("fade");
+                $("#demo1").transition("fade");
+
+        $("#lists").transition({
     animation  : 'scale',
     duration   : '0.5s',
     onComplete : function() {
-      
+                $("#calendar").transition("fade");
+
     }
   })
 ;
-        $("#meetingInput").hide("fast");
-        $("#field2").hide("fast");
-        $("#smallcalendar").hide("fast");
-        $("#demo").hide("fast");
-        $(".list").hide("fast");
         $(".list").empty();
         $("#meetingTable").empty();
         $("#demo1").html('<i class="calendar alternate outline icon"></i>');
