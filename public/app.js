@@ -329,7 +329,6 @@ $(document).ready(function(){
             
         }
     function hidingElements(){
-        meetingTable();
         $("#meetingTable").hide();
         $("#meetingInput").hide();
         $("#field2").hide();
