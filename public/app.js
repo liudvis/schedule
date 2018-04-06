@@ -89,7 +89,7 @@ $(document).ready(function(){
                 if(this.id=="changeToTomorrow" && selected<31){
                     selected++;
                     $("#demo").text(selected);
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of "+getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
                     $(".list").empty();
                     $("#meetingTable").empty();
                     meetingTable();
@@ -99,7 +99,7 @@ $(document).ready(function(){
         else if (this.id=="changeToYesterday" && selected>1){
                     selected--;
                     $("#demo").text(selected);
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
                     $(".list").empty();
                     $("#meetingTable").empty();
                     meetingTable();
@@ -305,28 +305,42 @@ $(document).ready(function(){
     //         addSchedule(data);
     //       });
     // }
-    
-      function fillCalendar() {
-          
-          for (var i=1; i<=31; i++){
-            if(i==1){
-              $('#tableBody').append($('<tr>'));
-            }
-            // if(i>-2 && i<1){
-            //  var emptyDate = $('<td>""</td>');
-            // $('#tableBody').append(emptyDate);
-          
-            // }
-            if(i==31){
-              $('#tableBody').append($('</tr>'));
-            }
-            var newDate = $('<td id="td'+i+'">'+i+'</td>');
-            $('#tableBody').append(newDate);
-              if(i==7 || i==14 || i==21 || i==28){
+function fillCalendar() {
+            var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+            var firstDay = new Date(y, m, 1).getDate();
+            var lastDay = new Date(y, m + 1, 0).getDate();
+            var firstWeekDay = new Date(y, m, 1).getDay();
+            var lastWeekDay =  new Date(y, m + 1, 0).getDay();
+               $('#tableBody').append($('<tr>'));
+  if(firstWeekDay==0){
+    for (var i=0; i<6; i++){
+                    var newDate = $('<td></td>');
+              $('#tableBody').append(newDate);
+                      var theDAY=firstWeekDay;
+    }
+  }
+                else {
+              for(let i=1; i<firstWeekDay; i++){
+                var theDAY=firstWeekDay;
+              var newDate = $('<td></td>');
+              $('#tableBody').append(newDate);
+            }}
+          for (var i=firstDay; i<=lastDay; i++){
+              if(theDAY==7){
+                 theDAY=0;
+                 }
+               if(theDAY==0){
+                 var newDate = $('<td id="td'+i+'">'+i+'</td>');
+                 $('#tableBody').append(newDate);
                  $('#tableBody').append($('</tr><tr>'));
                  }
-          }
-            
+              else {
+            var newDate = $('<td id="td'+i+'">'+i+'</td>');
+            $('#tableBody').append(newDate);
+              }   
+                          theDAY++;
+
+          }            
         }
     function hidingElements(){
         $("#meetingTable").hide();
@@ -350,6 +364,7 @@ $(document).ready(function(){
           }
   }
     function todaysDate(){
+        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
         var today = new Date();
         var dd = today.getDate();
         var mm = today.getMonth()+1; //January is 0!
@@ -358,10 +373,25 @@ $(document).ready(function(){
         if(mm<10) {
             mm = '0'+mm;
         } 
+        months[mm];
         today = mm + '/' + dd + '/' + yyyy;
         $("#td"+dd).css({'background':'rgb(184, 219, 232)'});
         console.log("todays date: " + dd);
         return dd;
+    }
+    function getMonth(){
+        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth(); //January is 0!
+        return   months[mm];
+    }
+    function getCurrentDay(){
+        var days = ["Sunday","Monday","Tuesday","Wendesday","Thursday","Friday","Saturday"];
+        var today = new Date(selected);
+        var dd = today.getDay();
+        console.log(dd)
+        return   dd;
     }
     function smallCalendarPopup () {
         $("#meetingInput").transition("fade");
@@ -402,7 +432,7 @@ $(document).ready(function(){
 
            $("#demo").text(p);
            $("#demo").transition("fade down");
-          $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +p+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+          $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+p+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
     }
   })
 ;         
