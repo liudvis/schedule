@@ -78,7 +78,8 @@ $(document).ready(function(){
         });
     $("#calendar").on("click", "td", function() {
         selected = chosenDate(this); 
-
+        console.log(selected);
+        meetingTable();
         //WORKS!
         $.getJSON("/api/schedules")
         .then(addSchedules);
@@ -329,6 +330,7 @@ $(document).ready(function(){
         }
     function hidingElements(){
         meetingTable();
+        $("#meetingTable").hide();
         $("#meetingInput").hide();
         $("#field2").hide();
         $("#smallcalendar").hide();
@@ -336,30 +338,7 @@ $(document).ready(function(){
         $("#lists").hide();
         todaysDate();
     }
-    function chosenDate(day){
 
-          $("td").removeClass("changetd"); 
-          var  p = ($( day ).text());
-          selected = p;
-          console.log(selected);
-          $(day).toggleClass("changetd");
-        $("#calendar").transition({
-        animation  : 'fade',
-        duration   : '0.4s',
-         onComplete : function() {
-           $("#meetingInput").transition("fade down");
-           $("#field2").transition("fade down");
-           $("#lists").transition("fade down");
-           $("#smallcalendar").transition("fade down");
-           $("#demo").text(p);
-                      $("#demo").transition("fade down");
-          $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +p+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-        $("#demo1").transition("fade down");
-    }
-  })
-;         
-          return p;
-    }
     function meetingTable() {
         $('#list2').append('<div class="header">Tasks</div>');
         $('#meetingTable').append('<thead class="full-width"><tr><th colspan="2" id = "miau"><div>Meetings</div></th></tr></thead>');
@@ -390,7 +369,7 @@ $(document).ready(function(){
         $("#field2").transition("fade");
         $("#smallcalendar").transition("fade");
         $("#demo").transition("fade");
-                $("#demo1").transition("fade");
+        $("#meetingTable").transition("fade");
 
         $("#lists").transition({
     animation  : 'scale',
@@ -404,5 +383,30 @@ $(document).ready(function(){
         $(".list").empty();
         $("#meetingTable").empty();
         $("#demo1").html('<i class="calendar alternate outline icon"></i>');
+    }
+        function chosenDate(day){
+
+          $("td").removeClass("changetd"); 
+          var  p = ($( day ).text());
+          selected = p;
+          console.log(selected);
+          $(day).toggleClass("changetd");
+        $("#calendar").transition({
+        animation  : 'fade',
+        duration   : '0.4s',
+         onComplete : function() {
+           $("#meetingInput").transition("fade down");
+           $("#field2").transition("fade down");
+           $("#lists").transition("fade down");
+           $("#smallcalendar").transition("fade down");
+                   $("#meetingTable").transition("fade");
+
+           $("#demo").text(p);
+           $("#demo").transition("fade down");
+          $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +p+" of March "+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+    }
+  })
+;         
+          return p;
     }
 });
