@@ -9,13 +9,11 @@ $(document).ready(function(){
             ($(this)).toggleClass('done', 200);         //WORKS!
             e.stopPropagation();
         });
-        $('#dropdown1').dropdown();
-        
-        $('#dropdown2').dropdown();
+    $('#dropdown1').dropdown();
+    $('#dropdown2').dropdown();
 
     $(document).on('click', function(e) {
-        let bybys = e.target.nodeClass;
-        console.log(bybys);
+        let X = e.target.nodeClass;
         // console.log(bybys);
         // if (/*bybys === "DIV"||*/ bybys === "BODY"||bybys === "H4") {
         //     console.log(e.target.nodeName);
@@ -24,7 +22,6 @@ $(document).ready(function(){
         // }
     });
     $('#meetingTable').on('click', 'td', function(e){
-            console.log($(this).data());
                 if($(this).data("empty")==true){
                     $('#meeting').focus();
                     $("#meeting").val("");
@@ -33,8 +30,8 @@ $(document).ready(function(){
                     $('#dropdown2').dropdown('set selected', time+1);
                 }
                 else if($(this).data("empty")==false){
-                    e.stopImmediatePropagation();
-                    $('#meeting').focus();
+                    // e.stopImmediatePropagation();
+                    // $('#meeting').focus();
                     // $.getJSON("/api/schedules/"+$(this).data("id"))
                     //     .then(function(edit){
                     //         $("#meeting").val(edit.name);
@@ -66,7 +63,6 @@ $(document).ready(function(){
     });
     $('#meeting').keypress(function(event){
         if(event.keyCode===13){
-            console.log("create meeting!");
         createMeeting(selected);                    //WORKS!
         }
     });
@@ -78,7 +74,6 @@ $(document).ready(function(){
         });
     $("#calendar").on("click", "td", function() {
         selected = chosenDate(this); 
-        console.log(selected);
         meetingTable();
         //WORKS!
         $.getJSON("/api/schedules")
@@ -86,10 +81,16 @@ $(document).ready(function(){
         });
         $("#demo1").on("click", "i", function(e) {
                 e.stopPropagation();
-                if(this.id=="changeToTomorrow" && selected<31){
+                var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+                var lastDay = new Date(y, m + 1, 0).getDate();
+                if(this.id=="changeToTomorrow" && selected<lastDay){
+                    $("#demo1").transition("fade right");
                     selected++;
                     $("#demo").text(selected);
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of "+getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    setTimeout(function(){
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of "+getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    }, 200);
+                    $("#demo1").transition("fade left");
                     $(".list").empty();
                     $("#meetingTable").empty();
                     meetingTable();
@@ -99,14 +100,16 @@ $(document).ready(function(){
         else if (this.id=="changeToYesterday" && selected>1){
                     selected--;
                     $("#demo").text(selected);
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+" The " +selected+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    $("#demo1").transition("fade left");
+                    setTimeout(function(){
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    }, 200);
+                    $("#demo1").transition("fade right");
                     $(".list").empty();
                     $("#meetingTable").empty();
                     meetingTable();
                     $.getJSON("/api/schedules")
                     .then(addSchedules);
-        } else {
-            console.log("nx");
         }
         });
         function changingTimes () {
@@ -136,15 +139,12 @@ $(document).ready(function(){
         function dropdownDeleteAndMoveToTomorrow(arg){
             var element = arg.parent().parent().parent();
             if(arg.val()==0){
-                console.log("Coming from function ddn: "+element)
                     element.html('<div>Moved to Tomorrow <i class="check icon"></i></div>');
                     element.addClass('elementChange').delay(1000).slideUp(700,function(){
                     updateTodo(element);
                     });
             }
             else if(arg.val()==2){          
-                                console.log("Coming from function ddn: "+element)
-
                     element.html('<div>Deleted  <div class="divcheck"><i class="check icon"></div></i></div>');
                     element.addClass('elementChange').delay(1000).slideUp(700,function(){
                     for(var i=element.data("startTime"); i<element.data("endTime"); i++){
@@ -183,12 +183,12 @@ $(document).ready(function(){
             return ddnMeeting;}
             
         }
-        function colors () {
-            var arr =["#f1ddf2", "#fff6ec", "#e7ebec", "#eafeec", "#eaeed2", "#eadcd2", "#cadcd2", "#cac8d2", "#b9c8d2", "#b9b3d2"];
-            var i = Math.floor(Math.random() * Math.floor(arr.length));
-            console.log(arr[i]);
-            return arr[i];
-        }
+        // function colors () {
+        //     var arr =["#f1ddf2", "#fff6ec", "#e7ebec", "#eafeec", "#eaeed2", "#eadcd2", "#cadcd2", "#cac8d2", "#b9c8d2", "#b9b3d2"];
+        //     var i = Math.floor(Math.random() * Math.floor(arr.length));
+        //     console.log(arr[i]);
+        //     return arr[i];
+        // }
         
         function addSchedule(schedule){
             if(selected == schedule.day){
@@ -231,7 +231,6 @@ $(document).ready(function(){
                 function checkingTime(startOfTheMeeting, endOfTheMeeting){
                     for(var i=startOfTheMeeting; i<endOfTheMeeting; i++){
                         if($('#time'+i).data('empty')==false){
-                            console.log(i);
                             return false;
                 }
                 }
@@ -279,7 +278,6 @@ $(document).ready(function(){
     function updateTodo(schedule){
           var updateUrl = '/api/schedules/' + schedule.data('id');
           var day=schedule.day;
-          console.log(selected)
           var updateData ={day: selected+1};
           $.ajax({
             method: 'PUT',
@@ -312,13 +310,13 @@ function fillCalendar() {
             var firstWeekDay = new Date(y, m, 1).getDay();
             var lastWeekDay =  new Date(y, m + 1, 0).getDay();
                $('#tableBody').append($('<tr>'));
-  if(firstWeekDay==0){
-    for (var i=0; i<6; i++){
-                    var newDate = $('<td></td>');
-              $('#tableBody').append(newDate);
-                      var theDAY=firstWeekDay;
-    }
-  }
+                  if(firstWeekDay==0){
+                    for (var i=0; i<6; i++){
+                                    var newDate = $('<td></td>');
+                              $('#tableBody').append(newDate);
+                                      var theDAY=firstWeekDay;
+                    }
+                  }
                 else {
               for(let i=1; i<firstWeekDay; i++){
                 var theDAY=firstWeekDay;
@@ -388,10 +386,9 @@ function fillCalendar() {
     }
     function getCurrentDay(){
         var days = ["Sunday","Monday","Tuesday","Wendesday","Thursday","Friday","Saturday"];
-        var today = new Date(selected);
+        var today = new Date((new Date()).getFullYear()+ getMonth().toString() +" "+selected.toString());
         var dd = today.getDay();
-        console.log(dd)
-        return   dd;
+        return   days[dd];
     }
     function smallCalendarPopup () {
         $("#meetingInput").transition("fade");
@@ -418,7 +415,6 @@ function fillCalendar() {
           $("td").removeClass("changetd"); 
           var  p = ($( day ).text());
           selected = p;
-          console.log(selected);
           $(day).toggleClass("changetd");
         $("#calendar").transition({
         animation  : 'fade',
