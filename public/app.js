@@ -85,6 +85,8 @@ $(document).ready(function(){
                 var lastDay = new Date(y, m + 1, 0).getDate();
                 if(this.id=="changeToTomorrow" && selected<lastDay){
                     $("#demo1").transition("fade right");
+                    $("#meetingTable").transition("fade right");
+                    $(".list").transition("fade right");
                     selected++;
                     $("#demo").text(selected);
                     setTimeout(function(){
@@ -94,6 +96,8 @@ $(document).ready(function(){
                     $(".list").empty();
                     $("#meetingTable").empty();
                     meetingTable();
+                    $("#meetingTable").transition("fade left");
+                    $(".list").transition("fade left");
                     $.getJSON("/api/schedules")
                     .then(addSchedules);
         }
@@ -101,6 +105,8 @@ $(document).ready(function(){
                     selected--;
                     $("#demo").text(selected);
                     $("#demo1").transition("fade left");
+                    $("#meetingTable").transition("fade left");
+                    $(".list").transition("fade left");
                     setTimeout(function(){
                     $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
                     }, 200);
@@ -108,6 +114,8 @@ $(document).ready(function(){
                     $(".list").empty();
                     $("#meetingTable").empty();
                     meetingTable();
+                    $("#meetingTable").transition("fade right");
+                    $(".list").transition("fade right");
                     $.getJSON("/api/schedules")
                     .then(addSchedules);
         }
