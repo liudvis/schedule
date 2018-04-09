@@ -11,8 +11,8 @@ $(document).ready(function(){
         });
     $('#dropdown1').dropdown();
     $('#dropdown2').dropdown();
-  $( "#meetingTable" ).on( "swipeleft", function(){
-      alert  ("miau");
+  $("#meetingTable").on( "swipeleft", function(e){
+      alert("miau");
   } );
 
     $(document).on('click', function(e) {
