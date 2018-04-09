@@ -119,7 +119,7 @@ $(document).ready(function(){
                     .then(addSchedules);
         }
         });
-        $("#lists").on("swiperight", function(e) {
+        $("#lists").on("swipeleft", function(e) {
                 e.stopPropagation();
                 var date = new Date(), y = date.getFullYear(), m = date.getMonth();
                 var lastDay = new Date(y, m + 1, 0).getDate();
@@ -142,7 +142,7 @@ $(document).ready(function(){
                     .then(addSchedules);
         }
         });
-        $("#lists").on("swipeleft", function(e) {
+        $("#lists").on("swiperight", function(e) {
         if(selected>1){
                     selected--;
                     $("#demo").text(selected);
