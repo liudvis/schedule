@@ -162,6 +162,9 @@ $(document).ready(function(){
                     .then(addSchedules);
         }
         });
+        $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});
+
+
         function changingTimes () {
             $('#dropdown1').dropdown({ onChange: function(value, $choise){
                 var arr= [];
