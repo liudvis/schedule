@@ -11,10 +11,6 @@ $(document).ready(function(){
         });
     $('#dropdown1').dropdown();
     $('#dropdown2').dropdown();
-  $("#meetingTable").on( "swipeleft", function(e){
-      alert("miau");
-  } );
-
     $(document).on('click', function(e) {
         let X = e.target.nodeClass;
         // console.log(bybys);
@@ -105,6 +101,49 @@ $(document).ready(function(){
                     .then(addSchedules);
         }
         else if (this.id=="changeToYesterday" && selected>1){
+                    selected--;
+                    $("#demo").text(selected);
+                    $("#demo1").transition("fade left");
+                    $("#meetingTable").transition("fade left");
+                    $(".list").transition("fade left");
+                    setTimeout(function(){
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    }, 200);
+                    $("#demo1").transition("fade right");
+                    $(".list").empty();
+                    $("#meetingTable").empty();
+                    meetingTable();
+                    $("#meetingTable").transition("fade right");
+                    $(".list").transition("fade right");
+                    $.getJSON("/api/schedules")
+                    .then(addSchedules);
+        }
+        });
+        $("#lists").on("swiperight", function(e) {
+                e.stopPropagation();
+                var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+                var lastDay = new Date(y, m + 1, 0).getDate();
+                if(selected<lastDay){
+                    $("#demo1").transition("fade right");
+                    $("#meetingTable").transition("fade right");
+                    $(".list").transition("fade right");
+                    selected++;
+                    $("#demo").text(selected);
+                    setTimeout(function(){
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of "+getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    }, 200);
+                    $("#demo1").transition("fade left");
+                    $(".list").empty();
+                    $("#meetingTable").empty();
+                    meetingTable();
+                    $("#meetingTable").transition("fade left");
+                    $(".list").transition("fade left");
+                    $.getJSON("/api/schedules")
+                    .then(addSchedules);
+        }
+        });
+        $("#lists").on("swipeleft", function(e) {
+        if(selected>1){
                     selected--;
                     $("#demo").text(selected);
                     $("#demo1").transition("fade left");
