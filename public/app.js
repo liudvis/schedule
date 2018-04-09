@@ -11,6 +11,9 @@ $(document).ready(function(){
         });
     $('#dropdown1').dropdown();
     $('#dropdown2').dropdown();
+  $( "#meetingTable" ).on( "swipeleft", function(){
+      alert  ("miau");
+  } );
 
     $(document).on('click', function(e) {
         let X = e.target.nodeClass;
@@ -442,4 +445,5 @@ function fillCalendar() {
 ;         
           return p;
     }
+    
 });
