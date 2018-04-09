@@ -23,6 +23,12 @@
   width: 350px;
   margin: auto;
 }
+.item {
+  font-size: 0.9em;
+}
+.header{
+  height: 36.5px;
+}
 #miau {
   text-align: center;
       font-size: 1.2em;
