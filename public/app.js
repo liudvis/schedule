@@ -1,5 +1,7 @@
 /*global $ */
 $(document).ready(function(){
+
+
     fillCalendar();
     hidingElements();
     changingTimes();
@@ -83,85 +85,43 @@ $(document).ready(function(){
                 var date = new Date(), y = date.getFullYear(), m = date.getMonth();
                 var lastDay = new Date(y, m + 1, 0).getDate();
                 if(this.id=="changeToTomorrow" && selected<lastDay){
-                    $("#demo1").transition("fade right");
-                    $("#meetingTable").transition("fade right");
-                    $(".list").transition("fade right");
-                    selected++;
-                    $("#demo").text(selected);
-                    setTimeout(function(){
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of "+getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-                    }, 200);
-                    $("#demo1").transition("fade left");
-                    $(".list").empty();
-                    $("#meetingTable").empty();
-                    meetingTable();
-                    $("#meetingTable").transition("fade left");
-                    $(".list").transition("fade left");
-                    $.getJSON("/api/schedules")
-                    .then(addSchedules);
+                    changingToTommorrow();
         }
         else if (this.id=="changeToYesterday" && selected>1){
-                    selected--;
-                    $("#demo").text(selected);
-                    $("#demo1").transition("fade left");
-                    $("#meetingTable").transition("fade left");
-                    $(".list").transition("fade left");
-                    setTimeout(function(){
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-                    }, 200);
-                    $("#demo1").transition("fade right");
-                    $(".list").empty();
-                    $("#meetingTable").empty();
-                    meetingTable();
-                    $("#meetingTable").transition("fade right");
-                    $(".list").transition("fade right");
-                    $.getJSON("/api/schedules")
-                    .then(addSchedules);
+                    changintToYesterday();
         }
         });
         $("#lists").on("swipeleft", function(e) {
+                if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+                    console.log("desktop!!!")
+                      $(document).on('swipeleft', 'html', function(event) {
+                             console.log("IN HERE");
+                             event.stopPropagation();
+                             event.preventDefault();
+                        }); 
+                } else {
                 e.stopPropagation();
                 var date = new Date(), y = date.getFullYear(), m = date.getMonth();
                 var lastDay = new Date(y, m + 1, 0).getDate();
                 if(selected<lastDay){
-                    $("#demo1").transition("fade right");
-                    $("#meetingTable").transition("fade right");
-                    $(".list").transition("fade right");
-                    selected++;
-                    $("#demo").text(selected);
-                    setTimeout(function(){
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of "+getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-                    }, 200);
-                    $("#demo1").transition("fade left");
-                    $(".list").empty();
-                    $("#meetingTable").empty();
-                    meetingTable();
-                    $("#meetingTable").transition("fade left");
-                    $(".list").transition("fade left");
-                    $.getJSON("/api/schedules")
-                    .then(addSchedules);
+                    changintToYesterday();
         }
+                }
         });
         $("#lists").on("swiperight", function(e) {
+            if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+                    console.log("desktop!!!")
+                      $(document).on('swipeleft', 'html', function(event) {
+                             console.log("IN HERE");
+                             event.stopPropagation();
+                             event.preventDefault();
+                        }); 
+                } else {
         if(selected>1){
-                    selected--;
-                    $("#demo").text(selected);
-                    $("#demo1").transition("fade left");
-                    $("#meetingTable").transition("fade left");
-                    $(".list").transition("fade left");
-                    setTimeout(function(){
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-                    }, 200);
-                    $("#demo1").transition("fade right");
-                    $(".list").empty();
-                    $("#meetingTable").empty();
-                    meetingTable();
-                    $("#meetingTable").transition("fade right");
-                    $(".list").transition("fade right");
-                    $.getJSON("/api/schedules")
-                    .then(addSchedules);
-        }
+                    changingToTommorrow();
+        }}
         });
+        
         $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});
 
 
@@ -183,6 +143,42 @@ $(document).ready(function(){
     $('#dropdown2').dropdown('change values', arr);
   }
 });
+        }
+        function changingToTommorrow(){
+            $("#demo1").transition("fade right");
+                    $("#meetingTable").transition("fade right");
+                    $(".list").transition("fade right");
+                    selected++;
+                    $("#demo").text(selected);
+                    setTimeout(function(){
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of "+getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    }, 200);
+                    $("#demo1").transition("fade left");
+                    $(".list").empty();
+                    $("#meetingTable").empty();
+                    meetingTable();
+                    $("#meetingTable").transition("fade left");
+                    $(".list").transition("fade left");
+                    $.getJSON("/api/schedules")
+                    .then(addSchedules);
+        }
+        function changintToYesterday(){
+                    selected--;
+                    $("#demo").text(selected);
+                    $("#demo1").transition("fade left");
+                    $("#meetingTable").transition("fade left");
+                    $(".list").transition("fade left");
+                    setTimeout(function(){
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    }, 200);
+                    $("#demo1").transition("fade right");
+                    $(".list").empty();
+                    $("#meetingTable").empty();
+                    meetingTable();
+                    $("#meetingTable").transition("fade right");
+                    $(".list").transition("fade right");
+                    $.getJSON("/api/schedules")
+                    .then(addSchedules);
         }
         function addSchedules(schedules){
             schedules.forEach(function(schedule){
