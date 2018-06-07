@@ -5,10 +5,6 @@ var scheduleSchema = new mongoose.Schema({
         type: String,
         required: 'name cannot be blank'
     },
-    complete: {
-        type: Boolean,
-        default: false
-    },
     created_date: {
         type: Date,
         default: Date.now
@@ -26,11 +22,16 @@ var scheduleSchema = new mongoose.Schema({
     },
     meetingEnd: {
         type:Number,
+    },
+    author: {
+        id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+        },
+        username: String
     }
 });
 
 
-
 var Schedule = mongoose.model('Schedule', scheduleSchema);
-
 module.exports = Schedule;

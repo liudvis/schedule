@@ -1,7 +1,5 @@
 /*global $ */
 $(document).ready(function(){
-
-
     fillCalendar();
     hidingElements();
     changingTimes();
@@ -253,6 +251,7 @@ $(document).ready(function(){
                 $('#time'+schedule.meetingStart).html(newMeeting);
                 $('.ui.dropdown').dropdown('restore defaults');
             } else if (schedule.type==="todo"){
+                console.log("adding a todo");
                 var newTodo =  $('<div class="item">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");
                 newTodo.data('id', schedule._id);
                 newTodo.data('empty', false);

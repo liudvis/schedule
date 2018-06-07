@@ -5,3 +5,4 @@ mongoose.connect('mongodb://liudvis2:miau@ds221609.mlab.com:21609/schedule');
 mongoose.Promise = Promise;
 
 module.exports.Schedule = require('./schedule');
+module.exports.User = require('./user');

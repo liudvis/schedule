@@ -1,0 +1,105 @@
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0 user-scalable=no">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css">    
+<link rel="stylesheet" type="text/css" href="/app.css"> 
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.js"></script>
+  <script src="//code.jquery.com/mobile/1.5.0-alpha.1/jquery.mobile-1.5.0-alpha.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js" type="text/javascript"></script>
+
+</head>
+<body>
+
+
+<div class="ui stackable one column grid">
+    <div class="column">
+<div>
+<button class="ui primary button" id="smallcalendar"><span id="demo"></span>
+  <i class="calendar alternate outline icon"></i>
+</button>
+</div>
+</div>
+</div>
+
+<div class="ui stackable two column grid" id="inputFields">
+  <div class="column">
+    <div class="ui required fluid action input" id="meetingInput">
+      <input type="text" placeholder="Add a meeting here.." id="meeting" name="empty">
+      <select class="ui compact selection dropdown"  id="dropdown1" name="empty1">
+          <option value="">Start</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+          <option value="17">17</option>
+          <option value="18">18</option>
+
+      </select>
+        <select class="ui compact selection dropdown"  id="dropdown2" name="empty2">
+          <option value="">End</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+          <option value="17">17</option>
+          <option value="18">18</option>
+        </select>
+      <div class="ui primary icon button" id='submit1'><i class="plus icon"></i>
+</div>
+  </div>
+  </div>
+  <div class="column">
+        <div class="ui  form" id="field2">
+            <label>Insert a task:</label>
+            <input type="text" id="task" placeholder="Add a task here.." required>
+          </div>
+        </div>
+  </div>
+  
+  
+
+<h4 class="ui horizontal divider header" id="demo1">
+  <i class="calendar alternate outline icon"></i>
+</h4>
+
+  <table class="ui celled striped table unstackable" id="calendar">
+  <thead>
+    <tr><th>M</th>
+    <th>T</th>
+    <th>W</th>
+    <th>T</th>
+    <th>F</th>
+    <th>S</th>
+    <th>S</th>
+  </tr></thead>
+  <tbody id="tableBody">
+  </tbody>
+  </table>
+
+<div class="ui grid" id="lists">
+  <div class="ten wide column">    
+<table class="ui unstackable very basic table" id="meetingTable"> 
+  <tbody>
+  </tbody>
+</table>
+    </div>
+  <div class="six wide column">
+        <div class="ui divided list" id="list2">
+     </div>  
+  </div>
+</div>
+
+<span>Signed in as  <%= currentUser %></span><a href="/logout" data-ajax="false">  Logout</a> 
+
+
+
+<script type="text/javascript" src="app.js"></script>
+</body>

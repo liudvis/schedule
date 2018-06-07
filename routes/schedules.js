@@ -12,4 +12,5 @@ router.route('/:scheduleId')
     .put(helpers.updateSchedule)
     .delete(helpers.deleteSchedule);
 
+
 module.exports=router;
