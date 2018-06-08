@@ -129,3 +129,7 @@ td:hover {
 .dropdown:hover .dropbtn {
     background-color: inherit;
 }
+#signedin {
+  float: right;
+  margin: 10px 10px;
+}
