@@ -1,8 +1,9 @@
 /*global $ */
 $(document).ready(function(){
     setTimeout(function() {
-        $(".message").hide('blind', {}, 500)
+        $(".message").transition('fade up')
     }, 3000);
+
     fillCalendar();
     hidingElements();
     changingTimes();
@@ -74,7 +75,7 @@ $(document).ready(function(){
     $("#smallcalendar").on("click", function(){
         smallCalendarPopup();                       //  WORKS!
         });
-    $("#calendar").on("click", "td", function() {
+    $("#calendar").on("click", "td:not(:empty)", function() {
         selected = chosenDate(this); 
         meetingTable();
         //WORKS!
@@ -99,28 +100,31 @@ $(document).ready(function(){
                              console.log("IN HERE");
                              event.stopPropagation();
                              event.preventDefault();
-                        }); 
+                        });                 
                 } else {
-                e.stopPropagation();
-                var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-                var lastDay = new Date(y, m + 1, 0).getDate();
-                if(selected<lastDay){
-                    changintToYesterday();
-        }
-                }
+            e.stopPropagation();
+            var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+            var lastDay = new Date(y, m + 1, 0).getDate();
+            if(selected<lastDay){
+                    console.log("Selected " + selected);
+                    changingToTommorrow();
+        }}
         });
+              
         $("#lists").on("swiperight", function(e) {
             if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
                     console.log("desktop!!!")
-                      $(document).on('swipeleft', 'html', function(event) {
+                      $(document).on('swiperight', 'html', function(event) {
                              console.log("IN HERE");
                              event.stopPropagation();
                              event.preventDefault();
                         }); 
                 } else {
-        if(selected>1){
-                    changingToTommorrow();
-        }}
+                e.stopPropagation();
+                if(selected>1){
+                    changintToYesterday();
+        }
+                }
         });
         
         $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});

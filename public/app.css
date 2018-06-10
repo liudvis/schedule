@@ -36,7 +36,7 @@
 p{
   text-align: center;
 }
-.changetd {
+.changetd /*td:not(:empty)*/{
     border: 1px solid #2185d0;
     border-radius: 5px;
 }
@@ -65,7 +65,7 @@ p{
   padding-left: 5px;
   padding-right: 4px;
 }
-td:hover { 
+td:not(:empty):hover { 
     background-color: #f3fdf9;
 }
 .meetingTableTime{
@@ -133,3 +133,6 @@ td:hover {
   float: right;
   margin: 10px 10px;
 }
+/*.message {*/
+/*  float: center;*/
+/*}*/
