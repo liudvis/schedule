@@ -4,6 +4,7 @@ var express     = require('express'),
     passport    = require('passport'),
     LocalStrategy = require('passport-local'),
     User        = require("./models/user"),
+    flash       = require("connect-flash"),
     bodyParser  = require("body-parser");
     
 var scheduleRoutes = require('./routes/schedules');
@@ -12,6 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(__dirname + '/public'));
 app.use(express.static(__dirname + '/views'));
+app.use(flash());
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
@@ -26,6 +28,14 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate())); //comes from passport local mongoose
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+app.use(function(req, res, next){
+// if there's a flash message, transfer
+// it to the context, then clear it
+res.locals.message = req.flash("error");
+delete req.session.flash;
+next();
+});
 
 function isLoggedIn(req, res, next){ //middleware
     if(req.isAuthenticated()){
@@ -55,9 +65,6 @@ app.get("/register", function(req, res){
 });
 //handle sign up logic
 app.post("/register", function(req,  res){
-// if (isset($_POST['register'])) {
-//     //update action
-// }
     var newUser = new User({username: req.body.username});
     User.register(newUser, req.body.password, function(err, user){
         if(err){
@@ -78,12 +85,14 @@ app.get("/login", function(req, res){
 app.post("/login", passport.authenticate("local", 
     {
         successRedirect: "/",
-        failureRedirect: "/login"
+        failureRedirect: "/login",
+        // failureFlash: 'Invalid username or password.'
     }), function(req, res){
 });
 //logout route
 app.get("/logout", function(req, res) {
     req.logout();
+    req.flash("error", "Logged You Out.");
     res.render("login.ejs");
 });
 
