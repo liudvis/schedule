@@ -23,12 +23,20 @@
     }
   </style>
   
-  <h1><%= message %></h1>
-  <div class="ui message">
+  <% if(success && success.length > 0){ %>
+    <div class="ui success message">
   <div class="header">
-    <%= message %>
+    <%= success %>
   </div>
   </div>
+  <% } %>
+    <% if(error && error.length > 0){ %>
+    <div class="ui error message">
+  <div class="header">
+    <%= error %>
+  </div>
+  </div>
+  <% } %>
 
 <div class="ui middle aligned center aligned grid">
   <div class="column">

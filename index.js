@@ -31,21 +31,22 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next){
 // if there's a flash message, transfer
-// it to the context, then clear it
-res.locals.message = req.flash("error");
-delete req.session.flash;
+// it to the context
+res.locals.error = req.flash("error");
+res.locals.success = req.flash("success");
 next();
 });
 
 function isLoggedIn(req, res, next){ //middleware
     if(req.isAuthenticated()){
+        req.flash("success", "Successfully logged in.");
         return next();
     }
+    req.flash("error", "You need to be logged-in to do that.");
     res.redirect("/login");
 }
     
 app.get('/', isLoggedIn, function(req, res){
-        console.log("------"+req.user.username);
         User.find({}, function(err){
             if(err){
                 console.log(err)
@@ -69,16 +70,21 @@ app.post("/register", function(req,  res){
     User.register(newUser, req.body.password, function(err, user){
         if(err){
             console.log(err);
-            res.send(err);
+            req.flash("error", err.message);
+            res.redirect("register");
         } else {
             passport.authenticate("local")(req, res, function(){
-                res.redirect("/");
+            req.flash("success", "User " + user.username + "was successfully registered");
+            res.redirect("/");
             });
         }
     });
 });
 //login  form 
 app.get("/login", function(req, res){
+    // if(err){
+    //         req.flash("error", "Incorect username or password.");
+    // }
     res.render('login.ejs');
 });
 //login logic
@@ -86,13 +92,14 @@ app.post("/login", passport.authenticate("local",
     {
         successRedirect: "/",
         failureRedirect: "/login",
-        // failureFlash: 'Invalid username or password.'
+        successFlash: "Successfully logged in",
+        failureFlash: "Incorect username or password"
     }), function(req, res){
 });
 //logout route
 app.get("/logout", function(req, res) {
     req.logout();
-    req.flash("error", "Logged You Out.");
+    req.flash("success", "Logged You Out.");
     res.redirect("login");
 });
 
