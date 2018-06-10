@@ -42,7 +42,6 @@ function isLoggedIn(req, res, next){ //middleware
         req.flash("success", "Successfully logged in.");
         return next();
     }
-    req.flash("error", "You need to be logged-in to do that.");
     res.redirect("/login");
 }
     
