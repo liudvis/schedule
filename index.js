@@ -93,7 +93,7 @@ app.post("/login", passport.authenticate("local",
 app.get("/logout", function(req, res) {
     req.logout();
     req.flash("error", "Logged You Out.");
-    res.render("login.ejs");
+    res.redirect("login");
 });
 
 app.use('/api/schedules', scheduleRoutes);
