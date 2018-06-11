@@ -2,7 +2,8 @@
 $(document).ready(function(){
     setTimeout(function() {
         $(".message").transition('fade up')
-    }, 3000);
+    }, 3000); 
+            $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page
     nearestMeetings();
     fillCalendar();
     hidingElements();
@@ -512,27 +513,27 @@ function fillCalendar() {
         return   days[dd];
     }
     function smallCalendarPopup () {
+        
         $("#meetingInput").transition("fade");
         $("#field2").transition("fade");
         $("#smallcalendar").transition("fade");
         $("#demo").transition("fade");
         $("#meetingTable").transition("fade");
-
+        $("#nearestList").transition("fade");
+        
         $("#lists").transition({
-    animation  : 'scale',
-    duration   : '0.5s',
-    onComplete : function() {
-                $("#calendar").transition("fade");
-
-    }
-  })
-;
+            animation  : 'scale',
+            duration   : '0.5s',
+            onComplete : function() {
+                        $("#calendar").transition("fade");
+            }
+        });
         $(".list").empty();
         $("#meetingTable").empty();
         $("#demo1").html('<i class="calendar alternate outline icon"></i>');
     }
         function chosenDate(day){
-
+            
           $("td").removeClass("changetd"); 
           var  p = ($( day ).text());
           selected = p;
@@ -541,12 +542,12 @@ function fillCalendar() {
         animation  : 'fade',
         duration   : '0.4s',
          onComplete : function() {
+           $("#nearestList").transition("fade down");
            $("#meetingInput").transition("fade down");
            $("#field2").transition("fade down");
            $("#lists").transition("fade down");
            $("#smallcalendar").transition("fade down");
-                   $("#meetingTable").transition("fade");
-console.log(getCurrentDay()+"/////////////++++++++++++");
+           $("#meetingTable").transition("fade");
            $("#demo").text(p);
            $("#demo").transition("fade down");
           $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+p+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
