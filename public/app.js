@@ -3,7 +3,7 @@ $(document).ready(function(){
     setTimeout(function() {
         $(".message").transition('fade up')
     }, 3000);
-
+    nearestMeetings();
     fillCalendar();
     hidingElements();
     changingTimes();
@@ -50,6 +50,7 @@ $(document).ready(function(){
                         
                                         // });
                 }
+                console.log(todaysDate()+"/////////////++++++++++++"+getCurrentDay());
                         
         });
     $('.list,#meetingTable').on('click', 'option', function(e){
@@ -127,9 +128,66 @@ $(document).ready(function(){
                 }
         });
         
-        $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});
+        // $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});
+            
 
-
+        
+        function nearestMeetings(){
+            var today = new Date();
+            var dd = today.getDate();
+            var meetings = [];
+            var tasks = [];
+            $.getJSON("/api/schedules", function(result){
+                $.each(result, function(i, field){          //Putting elements to according arrays
+                        if(field.day>=dd && field.day<=dd+3){
+                            if(field.type=="meeting"){
+                                meetings.push(field);
+                            } else {
+                                tasks.push(field);
+                            }
+                        }
+                });
+            $('#nearestListHeader').append('<p><strong>Upcoming Meetings and Tasks:</strong></p>');
+            bubbleSortMeetings(meetings).forEach(function(element) {
+                    $('#nearestMeetingsList').append('<span>'+ element.name + "  " + element.meetingStart +"-"+ element.meetingEnd + " on " + dayOfTheWeek(element.day) + '<span><br>');
+            });
+            
+            
+            bubbleSort(tasks).forEach(function(element) {
+                $('#nearestTasksList').append('<span><strong>'+ element.name + "</strong> on "+ dayOfTheWeek(element.day) + '<span><br>');
+            });
+            //sort meetings and todos (a method?)
+            //display chronoligically
+    });
+        }
+            // $('#meetingTable').append('<thead class="full-width"><tr><th colspan="2" id = "miau"><div>Meetings</div></th></tr></thead>');
+        function bubbleSort(arr){
+           var len = arr.length;
+           for (var i = len-1; i>=0; i--){
+             for(var j = 1; j<=i; j++){
+               if(arr[j-1].day>arr[j].day){
+                   var temp = arr[j-1];
+                   arr[j-1] = arr[j];
+                   arr[j] = temp;
+                }
+             }
+           }
+           return arr;
+        }
+        function bubbleSortMeetings(arr){
+           var len = arr.length;
+           for (var i = len-1; i>=0; i--){
+             for(var j = 1; j<=i; j++){
+               if(arr[j-1].meetingStart>arr[j].meetingStart){
+                   var temp = arr[j-1];
+                   arr[j-1] = arr[j];
+                   arr[j] = temp;
+                }
+             }
+           }
+           return arr;
+        }
+        
         function changingTimes () {
             $('#dropdown1').dropdown({ onChange: function(value, $choise){
                 var arr= [];
@@ -393,7 +451,8 @@ function fillCalendar() {
               }   
                           theDAY++;
 
-          }            
+          }         
+        //   nearestMeetings();
         }
     function hidingElements(){
         $("#meetingTable").hide();
@@ -431,6 +490,13 @@ function fillCalendar() {
         $("#td"+dd).css({'background':'rgb(184, 219, 232)'});
         console.log("todays date: " + dd);
         return dd;
+    }
+    function dayOfTheWeek (day){
+        var x = new Date((new Date()).getFullYear()+ getMonth().toString() +" "+day.toString());
+        console.log(x.getDay());
+            var weekday = new Array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
+            var n = weekday[x.getDay()];
+            return n;
     }
     function getMonth(){
         var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
@@ -480,7 +546,7 @@ function fillCalendar() {
            $("#lists").transition("fade down");
            $("#smallcalendar").transition("fade down");
                    $("#meetingTable").transition("fade");
-
+console.log(getCurrentDay()+"/////////////++++++++++++");
            $("#demo").text(p);
            $("#demo").transition("fade down");
           $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+p+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
