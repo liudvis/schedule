@@ -1,6 +1,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0 user-scalable=no">
 
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css">    
 <link rel="stylesheet" type="text/css" href="/app.css"> 
     <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
@@ -19,14 +20,14 @@
   <i class="calendar alternate outline icon"></i>
 </button>
 <div>  <% if(success && success.length > 0){ %>
-    <div class="ui success message" id="successMessage">
+    <div class="ui success message messages" id="successMessage">
   <div class="header">
     <%= success %>
   </div>
   </div>
   <% } %>
     <% if(error && error.length > 0){ %>
-    <div class="ui error message">
+    <div class="ui error message messages">
   <div class="header">
     <%= error %>
   </div>
@@ -39,6 +40,11 @@
 </div>
 </div>
 
+<div class="ui message" id="n">
+  <div class="header">
+    Upcoming Meetings and Tasks:
+    <span><i class="fas fa-times" id="closeMessage"></i></span>
+  </div>
 <div class="ui grid" id="nearestList">
     <div class="twelve wide column">
         <div id="nearestListHeader"></div>
@@ -49,6 +55,7 @@
   <div class="eight wide column">
         <div id="nearestMeetingsList"></div>
     </div>
+</div>
 </div>
 
 <div class="ui stackable two column grid" id="inputFields">

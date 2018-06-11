@@ -1,9 +1,12 @@
 /*global $ */
 $(document).ready(function(){
     setTimeout(function() {
-        $(".message").transition('fade up')
-    }, 3000); 
-            $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page
+        $(".messages").transition('fade up')
+    }, 2000); 
+    $("#closeMessage").on('click', function(e){
+        $("#n").transition('fade up');
+    });
+    $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page
     nearestMeetings();
     fillCalendar();
     hidingElements();
@@ -148,7 +151,7 @@ $(document).ready(function(){
                             }
                         }
                 });
-            $('#nearestListHeader').append('<p><strong>Upcoming Meetings and Tasks:</strong></p>');
+            // $('#nearestListHeader').append('<p><strong>Upcoming Meetings and Tasks:</strong></p>');
             bubbleSortMeetings(meetings).forEach(function(element) {
                     $('#nearestMeetingsList').append('<span>'+ element.name + "  " + element.meetingStart +"-"+ element.meetingEnd + " on " + dayOfTheWeek(element.day) + '<span><br>');
             });

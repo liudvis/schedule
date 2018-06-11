@@ -40,6 +40,9 @@ p{
     border: 1px solid #2185d0;
     border-radius: 5px;
 }
+.fas {
+  float: right;
+}
 #smallcalendar {
     margin-top:10px;
 }
