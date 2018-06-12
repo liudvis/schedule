@@ -56,6 +56,10 @@ p{
     -webkit-animation: mymove 1s 1; /* Chrome, Safari, Opera */
     animation: mymove 1s 1;
 }
+.markedDays {
+  border-top: 5px solid #2185d0;
+  /*border-top-color: ;*/
+}
 @keyframes mymove {
 	  0% {max-width:0%;}
 	  20% {max-width:0%;}

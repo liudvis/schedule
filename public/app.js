@@ -8,9 +8,21 @@ $(document).ready(function(){
     });
     $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page
     nearestMeetings();
+
     fillCalendar();
     hidingElements();
     changingTimes();
+    function coloringMarkedDays(){
+        $.getJSON("/api/schedules", function(result){
+            $.each(result, function(i, field){
+                console.log( $("#td"+field.day));
+                $("#td"+field.day).addClass( "markedDays" );
+            });
+        });
+            // console.log();
+}
+
+
     var selected;
     $('#DDN').dropdown();
       $('#list2').on('click', 'div', function(e){
@@ -455,7 +467,7 @@ function fillCalendar() {
               }   
                           theDAY++;
 
-          }         
+          }      
         //   nearestMeetings();
         }
     function hidingElements(){
@@ -466,6 +478,7 @@ function fillCalendar() {
         $("#demo").hide();
         $("#lists").hide();
         todaysDate();
+        coloringMarkedDays();
     }
 
     function meetingTable() {
