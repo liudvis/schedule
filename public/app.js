@@ -28,6 +28,7 @@ $(document).ready(function(){
     $("#upcomingHeader").on('click', function(e){
         e.stopPropagation();
         $("#nearestList").transition("fade");
+        $("#arrowRotate").toggleClass("arrowRotateClass");
     });
     
     
@@ -187,11 +188,11 @@ $(document).ready(function(){
                         }
                 });
             bubbleSortMeetings(meetings).forEach(function(element) {
-                    $('#nearestMeetingsList').append('<span>'+ element.name + "  " + element.meetingStart +"-"+ element.meetingEnd + " on " + dayOfTheWeek(element.day) + '<span><hr><br>');
+                    $('#nearestMeetingsList').append('<span>'+ element.name + "  " + element.meetingStart +"-"+ element.meetingEnd + " on " + dayOfTheWeek(element.day) + '<span><br>');
             });
             
             bubbleSort(tasks).forEach(function(element) {
-                $('#nearestTasksList').append('<span><strong>'+ element.name + "</strong> on "+ dayOfTheWeek(element.day) + '<span><hr><br>');
+                $('#nearestTasksList').append('<span><strong>'+ element.name + "</strong> on "+ dayOfTheWeek(element.day) + '<span><br>');
             });
             //sort meetings and todos (a method?)
             //display chronoligically

@@ -39,9 +39,15 @@ p{
 .today {
   border: 2px solid #2185d0;
 }
-.fas {
+#closeMessage {
   float: right;
 }
+
+.arrowRotateClass {
+    transform: rotate(180deg);
+    transition-duration: 0.5s;
+}
+
 #smallcalendar {
     margin-top:10px;
 }

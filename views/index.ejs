@@ -34,7 +34,9 @@
   </div>
   <% } %>
 </div>
-<div id="signedin"><span>Signed in as  <strong><%= currentUser %></strong></span><a href="/logout" data-ajax="false"><i class="fas fa-sign-out-alt"></i></a> 
+<div id="signedin"><span>Signed in as  <strong><%= currentUser %></strong></span>
+                    <a href="/logout" data-ajax="false">  
+                      <i class="fas fa-sign-out-alt fa-lg"></i></a> 
 </div>
 </div>
 </div>
@@ -42,6 +44,7 @@
 
 <div class="ui message" id="upcomingMessage">
   <div class="header" id="upcomingHeader">
+    <i class="fas fa-angle-double-down" id="arrowRotate"></i>
     Upcoming Meetings and Tasks:
     <span><i class="fas fa-times" id="closeMessage"></i></span>
   </div>
