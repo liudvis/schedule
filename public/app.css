@@ -36,9 +36,8 @@
 p{
   text-align: center;
 }
-.changetd /*td:not(:empty)*/{
-    border: 1px solid #2185d0;
-    border-radius: 5px;
+.today {
+  border: 2px solid #2185d0;
 }
 .fas {
   float: right;
@@ -57,8 +56,10 @@ p{
     animation: mymove 1s 1;
 }
 .markedDays {
-  border-top: 5px solid #2185d0;
-  /*border-top-color: ;*/
+  background-color: #9bdbf7;
+}
+.markedDaysRemove {
+  
 }
 @keyframes mymove {
 	  0% {max-width:0%;}

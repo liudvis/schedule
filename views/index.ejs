@@ -34,14 +34,14 @@
   </div>
   <% } %>
 </div>
-<div id="signedin"><span>Signed in as  <strong><%= currentUser %></strong></span><a href="/logout" data-ajax="false">  Logout</a> 
+<div id="signedin"><span>Signed in as  <strong><%= currentUser %></strong></span><a href="/logout" data-ajax="false"><i class="fas fa-sign-out-alt"></i></a> 
 </div>
 </div>
 </div>
 </div>
 
-<div class="ui message" id="n">
-  <div class="header">
+<div class="ui message" id="upcomingMessage">
+  <div class="header" id="upcomingHeader">
     Upcoming Meetings and Tasks:
     <span><i class="fas fa-times" id="closeMessage"></i></span>
   </div>

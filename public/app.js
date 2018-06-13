@@ -1,17 +1,35 @@
 /*global $ */
 $(document).ready(function(){
     setTimeout(function() {
-        $(".messages").transition('fade up')
+        $(".messages").transition('fade up');
     }, 2000); 
+    
     $("#closeMessage").on('click', function(e){
-        $("#n").transition('fade up');
+          $('#upcomingMessage').transition({
+                animation : 'fade',
+                duration : '500ms',
+                onComplete : function(){
+                    $("#upcomingMessage").remove();
+            }
+        });
     });
+    
+    
     $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page
-    nearestMeetings();
-
+    
+    
     fillCalendar();
     hidingElements();
+    coloringMarkedDays()
     changingTimes();
+    var selected;
+    
+    $("#upcomingHeader").on('click', function(e){
+        e.stopPropagation();
+        $("#nearestList").transition("fade");
+    });
+    
+    
     function coloringMarkedDays(){
         $.getJSON("/api/schedules", function(result){
             $.each(result, function(i, field){
@@ -19,16 +37,14 @@ $(document).ready(function(){
                 $("#td"+field.day).addClass( "markedDays" );
             });
         });
-            // console.log();
-}
+    }
 
-
-    var selected;
     $('#DDN').dropdown();
       $('#list2').on('click', 'div', function(e){
             ($(this)).toggleClass('done', 200);         //WORKS!
             e.stopPropagation();
         });
+        
     $('#dropdown1').dropdown();
     $('#dropdown2').dropdown();
     $(document).on('click', function(e) {
@@ -69,33 +85,39 @@ $(document).ready(function(){
                 console.log(todaysDate()+"/////////////++++++++++++"+getCurrentDay());
                         
         });
+        
     $('.list,#meetingTable').on('click', 'option', function(e){
         e.stopPropagation();
         dropdownDeleteAndMoveToTomorrow($(this));    //WORKS!
       });
+      
     $('.list,#meetingTable').on('click', '.dropbtn', function(e){
         e.stopPropagation();
-      });      
+      }); 
+      
     $('#task').keypress(function(event){
         if(event.keyCode===13){
         createTodo(selected);                       //WORKS!
         }
     });
+    
     $('#meeting').keypress(function(event){
         if(event.keyCode===13){
         createMeeting(selected);                    //WORKS!
         }
     });
+    
     $("#submit1").on("click", function(){
         createMeeting(selected);                    //WORKS!
         });
+        
     $("#smallcalendar").on("click", function(){
         smallCalendarPopup();                       //  WORKS!
         });
+        
     $("#calendar").on("click", "td:not(:empty)", function() {
         selected = chosenDate(this); 
         meetingTable();
-        //WORKS!
         $.getJSON("/api/schedules")
         .then(addSchedules);
         });
@@ -110,6 +132,7 @@ $(document).ready(function(){
                     changintToYesterday();
         }
         });
+        
         $("#lists").on("swipeleft", function(e) {
                 if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
                     console.log("desktop!!!")
@@ -143,12 +166,10 @@ $(document).ready(function(){
         }
                 }
         });
-        
-        // $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});
-            
 
         
         function nearestMeetings(){
+            console.log("Caling nearest Meetings")
             var today = new Date();
             var dd = today.getDate();
             var meetings = [];
@@ -158,16 +179,15 @@ $(document).ready(function(){
                         if(field.day>=dd && field.day<=dd+3){
                             if(field.type=="meeting"){
                                 meetings.push(field);
+                                console.log(field);
                             } else {
                                 tasks.push(field);
                             }
                         }
                 });
-            // $('#nearestListHeader').append('<p><strong>Upcoming Meetings and Tasks:</strong></p>');
             bubbleSortMeetings(meetings).forEach(function(element) {
                     $('#nearestMeetingsList').append('<span>'+ element.name + "  " + element.meetingStart +"-"+ element.meetingEnd + " on " + dayOfTheWeek(element.day) + '<span><br>');
             });
-            
             
             bubbleSort(tasks).forEach(function(element) {
                 $('#nearestTasksList').append('<span><strong>'+ element.name + "</strong> on "+ dayOfTheWeek(element.day) + '<span><br>');
@@ -177,6 +197,7 @@ $(document).ready(function(){
     });
         }
             // $('#meetingTable').append('<thead class="full-width"><tr><th colspan="2" id = "miau"><div>Meetings</div></th></tr></thead>');
+        
         function bubbleSort(arr){
            var len = arr.length;
            for (var i = len-1; i>=0; i--){
@@ -190,6 +211,7 @@ $(document).ready(function(){
            }
            return arr;
         }
+        
         function bubbleSortMeetings(arr){
            var len = arr.length;
            for (var i = len-1; i>=0; i--){
@@ -222,6 +244,7 @@ $(document).ready(function(){
     $('#dropdown2').dropdown('change values', arr);
   }
 });
+
         }
         function changingToTommorrow(){
             $("#demo1").transition("fade right");
@@ -241,6 +264,7 @@ $(document).ready(function(){
                     $.getJSON("/api/schedules")
                     .then(addSchedules);
         }
+        
         function changintToYesterday(){
                     selected--;
                     $("#demo").text(selected);
@@ -259,11 +283,13 @@ $(document).ready(function(){
                     $.getJSON("/api/schedules")
                     .then(addSchedules);
         }
+        
         function addSchedules(schedules){
             schedules.forEach(function(schedule){
                 addSchedule(schedule);
             });
         }
+        
         function dropdownDeleteAndMoveToTomorrow(arg){
             var element = arg.parent().parent().parent();
             if(arg.val()==0){
@@ -340,6 +366,7 @@ $(document).ready(function(){
             }
             }       
     }
+    
     function createTodo(day){
         var userInput = $('#task').val();
         if(userInput=="") {
@@ -368,12 +395,9 @@ $(document).ready(function(){
     
         function createMeeting(day){
         var startOfTheMeeting = $('#dropdown1').dropdown('get value');
-        // console.log("miau miaju" + startOfTheMeeting);
-        // $('#dropdown1').dropdown('set selected', startOfTheMeeting);
-
         var endOfTheMeeting = $('#dropdown2').find(":selected").val();
-
         var nameOfTheMeeting = $('#meeting').val();
+        
         var check = checkingTime(Number(startOfTheMeeting), Number(endOfTheMeeting));
         if(nameOfTheMeeting=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End" || check==false) {
                 $('#meetingInput').effect("shake");
@@ -389,6 +413,7 @@ $(document).ready(function(){
         });
         }
     }
+    
     function deleteSchedule(schedule){
           var clickedId = schedule.data('id');
           var deleteUrl = '/api/schedules/' + clickedId; 
@@ -404,6 +429,7 @@ $(document).ready(function(){
             alert(err);
           });
     }
+    
     function updateTodo(schedule){
           var updateUrl = '/api/schedules/' + schedule.data('id');
           var day=schedule.day;
@@ -417,6 +443,7 @@ $(document).ready(function(){
             schedule.remove();
           });
     }
+    
     // function updateMeeting(schedule){
     //     var updateUrl = '/api/schedules/' + schedule._id;
     //     var meetingName = $("#meeting").val();
@@ -432,6 +459,7 @@ $(document).ready(function(){
     //         addSchedule(data);
     //       });
     // }
+    
 function fillCalendar() {
             var date = new Date(), y = date.getFullYear(), m = date.getMonth();
             var firstDay = new Date(y, m, 1).getDate();
@@ -468,8 +496,9 @@ function fillCalendar() {
                           theDAY++;
 
           }      
-        //   nearestMeetings();
+          nearestMeetings();
         }
+        
     function hidingElements(){
         $("#meetingTable").hide();
         $("#meetingInput").hide();
@@ -478,7 +507,6 @@ function fillCalendar() {
         $("#demo").hide();
         $("#lists").hide();
         todaysDate();
-        coloringMarkedDays();
     }
 
     function meetingTable() {
@@ -491,7 +519,9 @@ function fillCalendar() {
             $('#time'+i).data('empty', true);
             $('#time'+i).data('id', null);
           }
+          
   }
+  
     function todaysDate(){
         var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
         var today = new Date();
@@ -504,10 +534,11 @@ function fillCalendar() {
         } 
         months[mm];
         today = mm + '/' + dd + '/' + yyyy;
-        $("#td"+dd).css({'background':'rgb(184, 219, 232)'});
+        $("#td"+dd).addClass('today');
         console.log("todays date: " + dd);
         return dd;
     }
+    
     function dayOfTheWeek (day){
         var x = new Date((new Date()).getFullYear()+ getMonth().toString() +" "+day.toString());
         console.log(x.getDay());
@@ -515,6 +546,7 @@ function fillCalendar() {
             var n = weekday[x.getDay()];
             return n;
     }
+    
     function getMonth(){
         var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
         var today = new Date();
@@ -522,21 +554,27 @@ function fillCalendar() {
         var mm = today.getMonth(); //January is 0!
         return   months[mm];
     }
+    
     function getCurrentDay(){
         var days = ["Sunday","Monday","Tuesday","Wendesday","Thursday","Friday","Saturday"];
         var today = new Date((new Date()).getFullYear()+ getMonth().toString() +" "+selected.toString());
         var dd = today.getDay();
         return   days[dd];
     }
-    function smallCalendarPopup () {
-        
+    
+    function smallCalendarPopup () { //pressing on a small calendar icon to go back to main view
+        console.log("Should empty and spawn again")
+        $("#nearestTasksList").empty();
+        $("#nearestMeetingsList").empty();
+
+        nearestMeetings();
+        $("#upcomingMessage").transition('fade up');
         $("#meetingInput").transition("fade");
         $("#field2").transition("fade");
         $("#smallcalendar").transition("fade");
         $("#demo").transition("fade");
         $("#meetingTable").transition("fade");
-        $("#nearestList").transition("fade");
-        
+
         $("#lists").transition({
             animation  : 'scale',
             duration   : '0.5s',
@@ -544,30 +582,31 @@ function fillCalendar() {
                         $("#calendar").transition("fade");
             }
         });
+        
         $(".list").empty();
         $("#meetingTable").empty();
         $("#demo1").html('<i class="calendar alternate outline icon"></i>');
     }
-        function chosenDate(day){
-            
-          $("td").removeClass("changetd"); 
+    
+        function chosenDate(day){  // Displays the panel of chosen date (meeting, task lists, inputs), hides calendar
+                $("#upcomingMessage").transition('fade down');
+
           var  p = ($( day ).text());
           selected = p;
-          $(day).toggleClass("changetd");
-        $("#calendar").transition({
-        animation  : 'fade',
-        duration   : '0.4s',
-         onComplete : function() {
-           $("#nearestList").transition("fade down");
-           $("#meetingInput").transition("fade down");
-           $("#field2").transition("fade down");
-           $("#lists").transition("fade down");
-           $("#smallcalendar").transition("fade down");
-           $("#meetingTable").transition("fade");
-           $("#demo").text(p);
-           $("#demo").transition("fade down");
-          $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+p+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-    }
+
+            $("#calendar").transition({
+            animation  : 'fade',
+            duration   : '0.4s',
+             onComplete : function() {
+               $("#meetingInput").transition("fade down");
+               $("#field2").transition("fade down");
+               $("#lists").transition("fade down");
+               $("#smallcalendar").transition("fade down");
+               $("#meetingTable").transition("fade");
+               $("#demo").text(p);
+               $("#demo").transition("fade down");
+              $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+p+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+            }
   })
 ;         
           return p;
