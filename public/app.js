@@ -5,6 +5,7 @@ $(document).ready(function(){
     }, 2000); 
     
     $("#closeMessage").on('click', function(e){
+        e.stopPropagation()
           $('#upcomingMessage').transition({
                 animation : 'fade',
                 duration : '500ms',
@@ -563,6 +564,13 @@ function fillCalendar() {
     }
     
     function smallCalendarPopup () { //pressing on a small calendar icon to go back to main view
+    
+            for(var i=0; i<31; i++){
+                $("#td"+i).removeClass( "markedDays" );
+            }
+            
+            
+        coloringMarkedDays()
         console.log("Should empty and spawn again")
         $("#nearestTasksList").empty();
         $("#nearestMeetingsList").empty();
@@ -590,7 +598,7 @@ function fillCalendar() {
     
         function chosenDate(day){  // Displays the panel of chosen date (meeting, task lists, inputs), hides calendar
                 $("#upcomingMessage").transition('fade down');
-
+            
           var  p = ($( day ).text());
           selected = p;
 

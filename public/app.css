@@ -74,7 +74,7 @@ p{
   padding-right: 4px;
 }
 td:not(:empty):hover { 
-    background-color: #f3fdf9;
+    background-color: #cce2ff;
 }
 .meetingTableTime{
     width: 30px;
