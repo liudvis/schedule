@@ -187,11 +187,11 @@ $(document).ready(function(){
                         }
                 });
             bubbleSortMeetings(meetings).forEach(function(element) {
-                    $('#nearestMeetingsList').append('<span>'+ element.name + "  " + element.meetingStart +"-"+ element.meetingEnd + " on " + dayOfTheWeek(element.day) + '<span><br>');
+                    $('#nearestMeetingsList').append('<span>'+ element.name + "  " + element.meetingStart +"-"+ element.meetingEnd + " on " + dayOfTheWeek(element.day) + '<span><hr><br>');
             });
             
             bubbleSort(tasks).forEach(function(element) {
-                $('#nearestTasksList').append('<span><strong>'+ element.name + "</strong> on "+ dayOfTheWeek(element.day) + '<span><br>');
+                $('#nearestTasksList').append('<span><strong>'+ element.name + "</strong> on "+ dayOfTheWeek(element.day) + '<span><hr><br>');
             });
             //sort meetings and todos (a method?)
             //display chronoligically
