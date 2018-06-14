@@ -53,10 +53,10 @@
         <div id="nearestListHeader"></div>
     </div>
   <div class="eight wide column">
-        <div id="nearestTasksList"></div>
+        <div id="nearestMeetingsList"></div>
     </div>
   <div class="eight wide column">
-        <div id="nearestMeetingsList"></div>
+        <div id="nearestTasksList"></div>
     </div>
 </div>
 </div>
@@ -91,14 +91,15 @@
           <option value="17">17</option>
           <option value="18">18</option>
         </select>
-      <div class="ui primary icon button" id='submit1'><i class="plus icon"></i>
+      <div class="ui primary icon button" id='submitMeeting'><i class="plus icon"></i>
 </div>
   </div>
   </div>
   <div class="column">
-        <div class="ui  form" id="field2">
-            <label>Insert a task:</label>
-            <input type="text" id="task" placeholder="Add a task here.." required>
+            <div class="ui required fluid action input" id="field2">
+              <input type="text" id="task" placeholder="Add a task here.." required>
+                  <div class="ui primary icon button" id='submitTask'><i class="plus icon"></i>
+          </div>
           </div>
         </div>
   </div>
@@ -131,7 +132,7 @@
 </table>
     </div>
   <div class="six wide column">
-        <div class="ui divided list" id="list2">
+        <div class="ui divided list" id="taskList">
      </div>  
   </div>
 </div>
