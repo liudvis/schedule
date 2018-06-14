@@ -1,5 +1,23 @@
 /*global $ */
 $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????? GET&SET selected ///// move to another day popup,selection of tds
+
+
+    $(".close").on("click", function(){
+        $("#myModal").modal("hide");
+    })
+
+// // When the user clicks anywhere outside of the modal, close it
+// window.onclick = function(event) {
+//     if (event.target == modal) {
+//         modal.style.display = "none";
+//     }
+// }
+    
+    
+    
+    
+    
+    
     
     $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page
     
@@ -291,12 +309,40 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         if(arg.val()==0){
             updateTodo(elementId, elementDay, element);
         }
+        else if(arg.val()==1){
+            // $("#myBtn").on("click", function(){  // Get the modal
+            $('body').append(generateModel());
+            console.log("?????")
+             $("#myModal").modal('show');
+        }
         else if(arg.val()==2){   
             deleteSchedule(elementId, element);
         }
     }
     
-    function ddnButton (schedule){ //generating ddn buttons for elements
+    function generateModel(){
+        let modal = 
+        '<div class="ui modal" id="myModal">\
+          <i class="close icon"></i>\
+          <div class="header">\
+            Choose day:\
+          </div>\
+          <div class="description">\
+            <div>maiu</div>\
+            <div class="ui black deny button">\
+              Nope\
+            </div>\
+            <div class="ui positive right labeled icon button"> MIAU\
+              <i class="checkmark icon"></i>\
+            </div>\
+          </div>\
+        </div>';
+        return modal;
+    }
+    
+    
+    
+    function ddnButton (schedule){   //generating ddn buttons for elements
         if(schedule.type==="todo"){
             var ddnTodo= 
             '<div class="dropdown" style="float:right;">\
@@ -327,7 +373,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         //     return arr[i];
         // }
         
-    function addSchedule(schedule){ // appends and puts information accordingly for a single schedule element after the ajax call
+    function addSchedule(schedule){     // appends and puts information accordingly for a single schedule element after the ajax call
         if(selected == schedule.day){
             if(schedule.type==="meeting"){
                 var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
@@ -350,7 +396,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         }       
     }
     
-    function createTodo(day){ // takes user input and creates a todo
+    function createTodo(day){    // takes user input and creates a todo
         var userInput = $('#task').val();
         if(userInput=="") {
             $('#field2').effect("shake");
@@ -376,7 +422,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         return true;
     }
 
-    function createMeeting(day){ // takes user input, undergoes some conditions, and creates a meeting
+    function createMeeting(day){    // takes user input, undergoes some conditions, and creates a meeting
         var startOfTheMeeting = $('#dropdown1').dropdown('get value');
         var endOfTheMeeting = $('#dropdown2').find(":selected").val();
         var nameOfTheMeeting = $('#meeting').val();
@@ -397,8 +443,8 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         }
     }
     
-    function deleteSchedule(schedule, element){
-        var deleteUrl = '/api/schedules/' + schedule; 
+    function deleteSchedule(scheduleId, element){ // takes schedule id, and deletes it
+        var deleteUrl = '/api/schedules/' + scheduleId; 
         
         $.ajax({
             method: 'DELETE',
@@ -421,7 +467,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         });
     }
     
-    function updateTodo(todoId, todoDay, element){
+    function updateTodo(todoId, todoDay, element){  //takes schedules id, updates it
         var updateUrl = '/api/schedules/' + todoId;
         var updateData ={day: todoDay+1};
         
