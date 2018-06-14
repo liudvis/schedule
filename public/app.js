@@ -1,5 +1,5 @@
 /*global $ */
-$(document).ready(function(){
+$(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!???????????
     setTimeout(function() {
         $(".messages").transition('fade up');
     }, 2000); 
@@ -32,10 +32,9 @@ $(document).ready(function(){
     });
     
     
-    function coloringMarkedDays(){
+    function coloringMarkedDays(){ 
         $.getJSON("/api/schedules", function(result){
             $.each(result, function(i, field){
-                console.log( $("#td"+field.day));
                 $("#td"+field.day).addClass( "markedDays" );
             });
         });
@@ -84,8 +83,6 @@ $(document).ready(function(){
                         
                                         // });
                 }
-                console.log(todaysDate()+"/////////////++++++++++++"+getCurrentDay());
-                        
         });
         
     $('.list,#meetingTable').on('click', 'option', function(e){
@@ -118,7 +115,8 @@ $(document).ready(function(){
         });
         
     $("#calendar").on("click", "td:not(:empty)", function() {
-        selected = chosenDate(this); 
+        selected = chosenDate($(this).text()); 
+        console.log("!!!!!!!!!!!!!!"+selected)
         meetingTable();
         $.getJSON("/api/schedules")
         .then(addSchedules);
@@ -134,6 +132,34 @@ $(document).ready(function(){
                     changintToYesterday();
         }
         });
+        
+        
+        
+        
+    $("#nearestList").on("click", "span", function(e) {
+            // e.stopPropagation();
+            var miau = ($(this).attr('id'));
+            console.log("??????????????"+miau)
+            selected = chosenDate(miau); 
+            meetingTable();
+            $.getJSON("/api/schedules")
+            .then(addSchedules);
+            });
+            
+            // $("#demo1").on("click", "i", function(e) {
+            //         e.stopPropagation();
+            //         var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+            //         var lastDay = new Date(y, m + 1, 0).getDate();
+            //         if(this.id=="changeToTomorrow" && selected<lastDay){
+            //             changingToTommorrow();
+            // }
+            // else if (this.id=="changeToYesterday" && selected>1){
+            //             changintToYesterday();
+            // }
+        // });
+        
+        
+        
         
         $("#lists").on("swipeleft", function(e) {
                 if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
@@ -171,7 +197,6 @@ $(document).ready(function(){
 
         
         function nearestMeetings(){
-            console.log("Caling nearest Meetings")
             var today = new Date();
             var dd = today.getDate();
             var meetings = [];
@@ -188,11 +213,11 @@ $(document).ready(function(){
                         }
                 });
             bubbleSortMeetings(meetings).forEach(function(element) {
-                    $('#nearestMeetingsList').append('<span>'+ element.name + "  " + element.meetingStart +"-"+ element.meetingEnd + " on " + dayOfTheWeek(element.day) + '<span><br>');
+                    $('#nearestMeetingsList').append('<span id='+element.day+'>'+ element.name + "  " + element.meetingStart +"-"+ element.meetingEnd + " on " + dayOfTheWeek(element.day) + '<span><br>');
             });
             
             bubbleSort(tasks).forEach(function(element) {
-                $('#nearestTasksList').append('<span><strong>'+ element.name + "</strong> on "+ dayOfTheWeek(element.day) + '<span><br>');
+                $('#nearestTasksList').append('<span id='+element.day+'><strong>'+ element.name + "</strong> on "+ dayOfTheWeek(element.day) + '<span><br>');
             });
             //sort meetings and todos (a method?)
             //display chronoligically
@@ -255,7 +280,7 @@ $(document).ready(function(){
                     selected++;
                     $("#demo").text(selected);
                     setTimeout(function(){
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of "+getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of "+getMonth() + ", "+getDayOfTheWeek()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
                     }, 200);
                     $("#demo1").transition("fade left");
                     $(".list").empty();
@@ -274,7 +299,7 @@ $(document).ready(function(){
                     $("#meetingTable").transition("fade left");
                     $(".list").transition("fade left");
                     setTimeout(function(){
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+selected+" of " +getMonth() + ", "+getDayOfTheWeek()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
                     }, 200);
                     $("#demo1").transition("fade right");
                     $(".list").empty();
@@ -557,27 +582,25 @@ function fillCalendar() {
         return   months[mm];
     }
     
-    function getCurrentDay(){
-        var days = ["Sunday","Monday","Tuesday","Wendesday","Thursday","Friday","Saturday"];
-        var today = new Date((new Date()).getFullYear()+ getMonth().toString() +" "+selected.toString());
-        var dd = today.getDay();
-        return   days[dd];
+    function getDayOfTheWeek(){ //returns day of the week in a word
+        var weekDays = ["Sunday","Monday","Tuesday","Wendesday","Thursday","Friday","Saturday"];
+        var selectedDay = new Date((new Date()).getFullYear()+ getMonth().toString() +" "+selected.toString());
+        var dd = selectedDay.getDay();
+        return   weekDays[dd];
     }
     
     function smallCalendarPopup () { //pressing on a small calendar icon to go back to main view
-    
-            for(var i=0; i<31; i++){
-                $("#td"+i).removeClass( "markedDays" );
-            }
-            
-            
-        coloringMarkedDays()
-        console.log("Should empty and spawn again")
-        $("#nearestTasksList").empty();
+        
+        for(var i=0; i<31; i++){ // reseting marked days
+            $("#td"+i).removeClass( "markedDays" );
+        }   
+        coloringMarkedDays() //coloring again
+        
+        $("#nearestTasksList").empty(); //reseting nearest meetings and tasks view 
         $("#nearestMeetingsList").empty();
-
-        nearestMeetings();
-        $("#upcomingMessage").transition('fade up');
+        nearestMeetings(); //populating again 
+        
+        $("#upcomingMessage").transition('fade up'); //hiding single day view
         $("#meetingInput").transition("fade");
         $("#field2").transition("fade");
         $("#smallcalendar").transition("fade");
@@ -592,33 +615,31 @@ function fillCalendar() {
             }
         });
         
-        $(".list").empty();
+        $(".list").empty(); // reseting lists of a single day view
         $("#meetingTable").empty();
         $("#demo1").html('<i class="calendar alternate outline icon"></i>');
     }
     
-        function chosenDate(day){  // Displays the panel of chosen date (meeting, task lists, inputs), hides calendar
-                $("#upcomingMessage").transition('fade down');
-            
-          var  p = ($( day ).text());
-          selected = p;
-
-            $("#calendar").transition({
+    function chosenDate(day){  // Displays the panel of chosen date (meeting, task lists, inputs), hides calendar
+        selected = day;
+        
+        $("#upcomingMessage").transition('fade down');
+        
+        $("#calendar").transition({
             animation  : 'fade',
             duration   : '0.4s',
-             onComplete : function() {
-               $("#meetingInput").transition("fade down");
-               $("#field2").transition("fade down");
-               $("#lists").transition("fade down");
-               $("#smallcalendar").transition("fade down");
-               $("#meetingTable").transition("fade");
-               $("#demo").text(p);
-               $("#demo").transition("fade down");
-              $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+p+" of " +getMonth() + ", "+getCurrentDay()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
-            }
-  })
-;         
-          return p;
+                onComplete : function() { // hiding the calendar view, tranisting to single day view
+                    $("#meetingInput").transition("fade down");
+                    $("#field2").transition("fade down");
+                    $("#lists").transition("fade down");
+                    $("#smallcalendar").transition("fade down");
+                    $("#meetingTable").transition("fade");
+                    $("#demo").text(day);
+                    $("#demo").transition("fade down");
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToYesterday"></i>'+day+" of " +getMonth() + ", "+getDayOfTheWeek()+'<i class="caret right icon" id="changeToTomorrow"></i></div>');
+                }   
+        });         
+        return day;
     }
     
 });
