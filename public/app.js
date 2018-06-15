@@ -48,20 +48,32 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         console.log($(this).data())
     });
     
+    $('#myModal').on('onHidden', function () {
+        $("#myModal").empty();
+    });
+
+    
     $(document).on("click", "#submitSpan", function(e){
         getSpan();
         console.log("GET SPAN");
-        let id = getSpan().data('id');
-        let day = getSpan().text();
         
-        updateTodoAnotherDay(id, day);
-        
+        if(getSpan()==undefined){
+            $("#myModal").effect("shake");
+        }
+        else {
+            let id = getSpan().data('id');
+            let day = getSpan().text();
+            updateTodoAnotherDay(id, day);
+            $("#myModal").modal("hide");
+            $("#myModal").remove()
+        }
     })
     
     
-    $(".close").on("click", function(){
-        $("#myModal").modal("hide");
-    })
+    // $(".close").on("click", function(){
+    //     // $("#myModal").modal("hide");
+    //     $("#myModal").remove()
+    // })
     
     function getSpan() { 
         return this.value; 
@@ -342,17 +354,22 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             var firstDay = new Date(y, m, 1).getDate();
             var lastDay = new Date(y, m + 1, 0).getDate();
             
-            for(var i=elementDay; i<=lastDay; i++){
+            var today = new Date();
+            var dd = today.getDate();
+            
+            for(var i=dd; i<=lastDay; i++){
+                if(i==dd || i==elementDay){
+                    console.log("miau");
+                } else {
                 var txt1 = $('<span class="modalSpan" id="span'+i+'"'+'>'+i+' </span>');               // Create element with HTML 
-                
-                // var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
-                // newMeeting.data('id', schedule._id);
                 
                 txt1.data('id', elementId);
                 txt1.data('day', elementDay);
                 $("#modalContent").append(txt1);
                 console.log(i); //setters and getters needed
-            }
+                }
+            
+        }
         }
         else if(arg.val()==2){   
             deleteSchedule(elementId, element);
