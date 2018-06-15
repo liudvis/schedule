@@ -1,15 +1,6 @@
 /*global $ */
 $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????? GET&SET selected ///// move to another day popup,selection of tds
 
-
-    
-
-// // When the user clicks anywhere outside of the modal, close it
-// window.onclick = function(event) {
-//     if (event.target == modal) {
-//         modal.style.display = "none";
-//     }
-// }
     let value;
     
     $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page
@@ -41,39 +32,28 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#arrowRotate").toggleClass("arrowRotateClass");
     });
     
-    $(document).on("click", ".modalSpan", function(event){
-        $(this).css("background-color","grey")
-        $(this).text()
-        setSpan($(this))
+    $(document).on("click", "td:not(.unavailable)", function(event){ // ON EVENT FIRED
+        $(this).addClass("selectedModalTd")
         console.log($(this).data())
+        setSpan($(this))
     });
-    
-    $('#myModal').on('onHidden', function () {
-        $("#myModal").empty();
-    });
-
     
     $(document).on("click", "#submitSpan", function(e){
         getSpan();
         console.log("GET SPAN");
+        console.log(getSpan())
         
         if(getSpan()==undefined){
             $("#myModal").effect("shake");
         }
         else {
             let id = getSpan().data('id');
-            let day = getSpan().text();
-            updateTodoAnotherDay(id, day);
+            let day = getSpan().data('day'); 
+            updateTodoAnotherDay(id, day-1);  // BBBBUUUUUUUUGGGGGGG
             $("#myModal").modal("hide");
             $("#myModal").remove()
         }
-    })
-    
-    
-    // $(".close").on("click", function(){
-    //     // $("#myModal").modal("hide");
-    //     $("#myModal").remove()
-    // })
+    });
     
     function getSpan() { 
         return this.value; 
@@ -82,6 +62,16 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     function setSpan(myArgument) { 
         this.value = myArgument;
     }
+    
+    $('#myModal').on('onHidden', function () {
+        $("#myModal").empty();
+    });
+    
+    // $(".close").on("click", function(){
+    //     // $("#myModal").modal("hide");
+    //     $("#myModal").remove()
+    // })
+    
     
     function coloringMarkedDays(){  //colors the days, which hold a meeting or a task.
         $.getJSON("/api/schedules", function(result){
@@ -335,6 +325,47 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             addSchedule(schedule);
         });
     }
+    
+    
+    function fillCalendarModal(elementId) { // generates the calendar
+        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var firstDay = new Date(y, m, 1).getDate();
+        var lastDay = new Date(y, m + 1, 0).getDate();
+        var firstWeekDay = new Date(y, m, 1).getDay();
+        var lastWeekDay =  new Date(y, m + 1, 0).getDay();
+            $('#tableBodyModal').append($('<tr>'));
+                if(firstWeekDay==0){
+                    for (var i=0; i<6; i++){
+                        var newDate = $('<td></td>');
+                        $('#tableBodyModal').append(newDate);
+                        var theDAY=firstWeekDay;
+                    }
+                } else {
+                    for(let i=1; i<firstWeekDay; i++){
+                        var theDAY=firstWeekDay;
+                        var newDate = $('<td class="unavailable"></td>');
+                        $('#tableBodyModal').append(newDate);
+                    }
+                }
+                for (var i=firstDay; i<=lastDay; i++){
+                    if(theDAY==7){
+                        theDAY=0;
+                    }
+                    if(theDAY==0){
+                        var newDate = newDate.data('id', elementId);
+                        newDate.data('day', i);
+                        newDate = $('<td id="Modaltd'+i+'">'+i+'</td>');
+                        $('#tableBodyModal').append(newDate);
+                        $('#tableBodyModal').append($('</tr><tr>'));
+                    } else {
+                        var newDate = newDate.data('id', elementId);
+                        newDate.data('day', i);
+                        newDate = $('<td id="Modaltd'+i+'">'+i+'</td>');
+                        $('#tableBodyModal').append(newDate);
+                    }   
+                    theDAY++;
+                }     
+    }
         
     function dropdownDeleteAndMoveToTomorrow(arg){ // functionality for deleting and updating elements
         let element = arg.parent().parent().parent();
@@ -345,38 +376,28 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             updateTodo(elementId, elementDay, element);
         }
         else if(arg.val()==1){
-            // $("#myBtn").on("click", function(){  // Get the modal
+ 
             $('body').append(generateModel());
-            $("#myModal").append()
+            fillCalendarModal(elementId);
+            $("#myModal").append();
             $("#myModal").modal('show');
-            
-            var date = new Date(), y = date.getFullYear(), m = date.getMonth();
-            var firstDay = new Date(y, m, 1).getDate();
-            var lastDay = new Date(y, m + 1, 0).getDate();
             
             var today = new Date();
             var dd = today.getDate();
             
-            for(var i=dd; i<=lastDay; i++){
-                if(i==dd || i==elementDay){
-                    console.log("miau");
-                } else {
-                var txt1 = $('<span class="modalSpan" id="span'+i+'"'+'>'+i+' </span>');               // Create element with HTML 
-                
-                txt1.data('id', elementId);
-                txt1.data('day', elementDay);
-                $("#modalContent").append(txt1);
-                console.log(i); //setters and getters needed
-                }
+            for(var i=1; i<=dd; i++){
+                    $("#Modaltd"+i).addClass('unavailable');
+                    console.log($("#Modaltd"+i).data());
+            }
+            $("#Modaltd"+elementDay).addClass('unavailable');
             
-        }
+            
+            
         }
         else if(arg.val()==2){   
             deleteSchedule(elementId, element);
         }
     }
-    
-    
     
     function generateModel(){   // id="myModal"   id="sudas"    <i class="close icon"></i>
         let modal = 
@@ -384,14 +405,25 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
           <div class="header">Header</div>\
           <i class="close icon"></i>\
           <div class="content" >\
-          <div id="modalContent"></div>\
+          <div id="calendarModal"></div>\
+            <table class="ui celled striped table unstackable" id="calendarModal">\
+              <thead>\
+                <tr><th>M</th>\
+                <th>T</th>\
+                <th>W</th>\
+                <th>T</th>\
+                <th>F</th>\
+                <th>S</th>\
+                <th>S</th>\
+              </tr></thead>\
+              <tbody id="tableBodyModal">\
+              </tbody>\
+              </table>\
           </div>\
           <button class="positive ui button" id="submitSpan">Positive Button</button>\
         </div>';
         return modal;
     }
-    
-    
     
     function ddnButton (schedule){   //generating ddn buttons for elements
         if(schedule.type==="todo"){
