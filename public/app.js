@@ -57,6 +57,11 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         }
     });
     
+    $(document).on("click", ".unavailable", function(event){ // ON EVENT FIRED
+        $("#myModal").effect("shake");
+        setSpan(undefined);
+    });
+    
     function getSpan() { 
         return this.value; 
     }
