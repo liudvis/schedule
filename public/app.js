@@ -33,6 +33,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     });
     
     $(document).on("click", ".available", function(event){ // ON EVENT FIRED
+        $("#submitSpan").removeAttr('disabled')
         $(".available").removeClass("selectedModalTd");
         $(this).addClass("selectedModalTd");
         console.log($(this).data());
@@ -437,7 +438,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
               </tbody>\
               </table>\
           </div>\
-          <button class="positive ui button" id="submitSpan">Positive Button</button>\
+          <button class="positive ui button" id="submitSpan" disabled>Positive Button</button>\
         </div>';
         return modal;
     }
