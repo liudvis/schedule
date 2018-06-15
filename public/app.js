@@ -2,9 +2,7 @@
 $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????? GET&SET selected ///// move to another day popup,selection of tds
 
 
-    $(".close").on("click", function(){
-        $("#myModal").modal("hide");
-    })
+    
 
 // // When the user clicks anywhere outside of the modal, close it
 // window.onclick = function(event) {
@@ -12,12 +10,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
 //         modal.style.display = "none";
 //     }
 // }
-    
-    
-    
-    
-    
-    
+    let value;
     
     $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page
     
@@ -48,6 +41,36 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#arrowRotate").toggleClass("arrowRotateClass");
     });
     
+    $(document).on("click", ".modalSpan", function(event){
+        $(this).css("background-color","grey")
+        $(this).text()
+        setSpan($(this))
+        console.log($(this).data())
+    });
+    
+    $(document).on("click", "#submitSpan", function(e){
+        getSpan();
+        console.log("GET SPAN");
+        let id = getSpan().data('id');
+        let day = getSpan().text();
+        
+        updateTodoAnotherDay(id, day);
+        
+    })
+    
+    
+    $(".close").on("click", function(){
+        $("#myModal").modal("hide");
+    })
+    
+    function getSpan() { 
+        return this.value; 
+    }
+    
+    function setSpan(myArgument) { 
+        this.value = myArgument;
+    }
+    
     function coloringMarkedDays(){  //colors the days, which hold a meeting or a task.
         $.getJSON("/api/schedules", function(result){
             $.each(result, function(i, field){
@@ -66,15 +89,15 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     $('#dropdown1').dropdown();
     $('#dropdown2').dropdown();
     
-    $(document).on('click', function(e) {
-        let X = e.target.nodeName;
-        console.log(X);
+    // $(document).on('click', function(e) {
+        // let X = e.target.nodeName;
+        // console.log(X);
         // if (/*bybys === "DIV"||*/ bybys === "BODY"||bybys === "H4") {
         //     console.log(e.target.nodeName);
         //     $("#meeting").val("");
         //     $('.ui.dropdown').dropdown('restore defaults');
         // }
-    });
+    // });
     
     $('#meetingTable').on('click', 'td', function(e){ // if pressed on an empty td of a meeting table,
         if($(this).data("empty")==true){              // focuses on meeting input and sets times of ddns
@@ -312,30 +335,41 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         else if(arg.val()==1){
             // $("#myBtn").on("click", function(){  // Get the modal
             $('body').append(generateModel());
-            console.log("?????")
-             $("#myModal").modal('show');
+            $("#myModal").append()
+            $("#myModal").modal('show');
+            
+            var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+            var firstDay = new Date(y, m, 1).getDate();
+            var lastDay = new Date(y, m + 1, 0).getDate();
+            
+            for(var i=elementDay; i<=lastDay; i++){
+                var txt1 = $('<span class="modalSpan" id="span'+i+'"'+'>'+i+' </span>');               // Create element with HTML 
+                
+                // var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
+                // newMeeting.data('id', schedule._id);
+                
+                txt1.data('id', elementId);
+                txt1.data('day', elementDay);
+                $("#modalContent").append(txt1);
+                console.log(i); //setters and getters needed
+            }
         }
         else if(arg.val()==2){   
             deleteSchedule(elementId, element);
         }
     }
     
-    function generateModel(){
+    
+    
+    function generateModel(){   // id="myModal"   id="sudas"    <i class="close icon"></i>
         let modal = 
         '<div class="ui modal" id="myModal">\
+          <div class="header">Header</div>\
           <i class="close icon"></i>\
-          <div class="header">\
-            Choose day:\
+          <div class="content" >\
+          <div id="modalContent"></div>\
           </div>\
-          <div class="description">\
-            <div>maiu</div>\
-            <div class="ui black deny button">\
-              Nope\
-            </div>\
-            <div class="ui positive right labeled icon button"> MIAU\
-              <i class="checkmark icon"></i>\
-            </div>\
-          </div>\
+          <button class="positive ui button" id="submitSpan">Positive Button</button>\
         </div>';
         return modal;
     }
@@ -481,6 +515,22 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             element.addClass('elementChange').delay(1000).slideUp(700,function(){
             });
         })
+    }
+    
+    function updateTodoAnotherDay(todoId, todoDay){  //takes schedules id, updates it
+        var updateUrl = '/api/schedules/' + todoId;
+        var updateData ={day: todoDay};
+        
+        $.ajax({
+            method: 'PUT',
+            url: updateUrl,
+            data: updateData
+        })
+        // .then(function(){
+        //     element.html('<div>Moved to '+todoDay+'th <i class="check icon"></i></div>');
+        //     element.addClass('elementChange').delay(1000).slideUp(700,function(){
+        //     });
+        // })
     }
     
     // function updateMeeting(schedule){
