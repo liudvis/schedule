@@ -32,10 +32,11 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#arrowRotate").toggleClass("arrowRotateClass");
     });
     
-    $(document).on("click", "td:not(.unavailable)", function(event){ // ON EVENT FIRED
-        $(this).addClass("selectedModalTd")
-        console.log($(this).data())
-        setSpan($(this))
+    $(document).on("click", ".available", function(event){ // ON EVENT FIRED
+        $(".available").removeClass("selectedModalTd");
+        $(this).addClass("selectedModalTd");
+        console.log($(this).data());
+        setSpan($(this));
     });
     
     $(document).on("click", "#submitSpan", function(e){
@@ -49,9 +50,10 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         else {
             let id = getSpan().data('id');
             let day = getSpan().data('day'); 
-            updateTodoAnotherDay(id, day-1);  // BBBBUUUUUUUUGGGGGGG
+            updateTodoAnotherDay(id, day-1, getElement());  // BBBBUUUUUUUUGGGGGGG
             $("#myModal").modal("hide");
             $("#myModal").remove()
+            setSpan(undefined);
         }
     });
     
@@ -343,7 +345,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                 } else {
                     for(let i=1; i<firstWeekDay; i++){
                         var theDAY=firstWeekDay;
-                        var newDate = $('<td class="unavailable"></td>');
+                        var newDate = $('<td></td>');
                         $('#tableBodyModal').append(newDate);
                     }
                 }
@@ -354,13 +356,13 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                     if(theDAY==0){
                         var newDate = newDate.data('id', elementId);
                         newDate.data('day', i);
-                        newDate = $('<td id="Modaltd'+i+'">'+i+'</td>');
+                        newDate = $('<td class="available" id="Modaltd'+i+'">'+i+'</td>');
                         $('#tableBodyModal').append(newDate);
                         $('#tableBodyModal').append($('</tr><tr>'));
                     } else {
                         var newDate = newDate.data('id', elementId);
                         newDate.data('day', i);
-                        newDate = $('<td id="Modaltd'+i+'">'+i+'</td>');
+                        newDate = $('<td class="available" id="Modaltd'+i+'">'+i+'</td>');
                         $('#tableBodyModal').append(newDate);
                     }   
                     theDAY++;
@@ -386,17 +388,27 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             var dd = today.getDate();
             
             for(var i=1; i<=dd; i++){
+                    $("#Modaltd"+i).removeClass('available');
                     $("#Modaltd"+i).addClass('unavailable');
                     console.log($("#Modaltd"+i).data());
             }
+            $("#Modaltd"+i).removeClass('available');
             $("#Modaltd"+elementDay).addClass('unavailable');
-            
+            setElement(element);
             
             
         }
         else if(arg.val()==2){   
             deleteSchedule(elementId, element);
         }
+    }
+    
+    function getElement() { 
+        return this.elementValue; 
+    }
+    
+    function setElement(myArgument) { 
+        this.elementValue = myArgument;
     }
     
     function generateModel(){   // id="myModal"   id="sudas"    <i class="close icon"></i>
@@ -566,7 +578,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         })
     }
     
-    function updateTodoAnotherDay(todoId, todoDay){  //takes schedules id, updates it
+    function updateTodoAnotherDay(todoId, todoDay, element){  //takes schedules id, updates it
         var updateUrl = '/api/schedules/' + todoId;
         var updateData ={day: todoDay};
         
@@ -575,11 +587,13 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             url: updateUrl,
             data: updateData
         })
-        // .then(function(){
-        //     element.html('<div>Moved to '+todoDay+'th <i class="check icon"></i></div>');
-        //     element.addClass('elementChange').delay(1000).slideUp(700,function(){
-        //     });
-        // })
+        .then(function(){
+            setTimeout(function(){  
+                element.html('<div>Moved to '+todoDay+'th <i class="check icon"></i></div>');
+                element.addClass('elementChange').delay(1000).slideUp(700,function(){
+                });
+            }, 100);
+        })
     }
     
     // function updateMeeting(schedule){
