@@ -665,7 +665,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     }
 
     function meetingTable() { // generates a tasks list header and meetings list table
-        $('#taskList').append('<div class="header">Tasks</div>'); // appends a task list header
+        $('#taskList').append('<div class="header" id="tasksHeader">Tasks</div>'); // appends a task list header
         $('#meetingTable').append('<thead class="full-width"><tr><th colspan="2" id = "miau"><div>Meetings</div></th></tr></thead>'); // appends a meeting list header
         
         for(var i=9; i<=17; i++){

@@ -3,12 +3,17 @@
   margin: auto;
   font-size: 1.2em;
 }
-#list2{
-  float:right;
+#taskList{
+  /*float:right;*/
   width: 100%;
   margin: auto;
-  font-size: 1.2em;
+  font-size: 16.8px;
 }
+
+#tasksHeader{
+  height: 35px;
+}
+
 #lists {
   margin: auto;
 }
@@ -21,9 +26,9 @@
   margin: auto;
 }
 
-.item {
-  font-size: 0.9em;
-}
+/*.item {*/
+/*  font-size: 0.9em;*/
+/*}*/
 
 .unavailable {
   background-color: rgb(192,192,192);
