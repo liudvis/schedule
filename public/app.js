@@ -40,6 +40,8 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         setSpan($(this));
     });
     
+    
+    
     $(document).on("click", "#submitSpan", function(e){
         getSpan();
         console.log("GET SPAN");
@@ -99,15 +101,15 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     $('#dropdown1').dropdown();
     $('#dropdown2').dropdown();
     
-    // $(document).on('click', function(e) {
-        // let X = e.target.nodeName;
-        // console.log(X);
+    $(document).on('click', function(e) {
+        let X = e.target.nodeName;
+        console.log(X);
         // if (/*bybys === "DIV"||*/ bybys === "BODY"||bybys === "H4") {
         //     console.log(e.target.nodeName);
         //     $("#meeting").val("");
         //     $('.ui.dropdown').dropdown('restore defaults');
         // }
-    // });
+    });
     
     $('#meetingTable').on('click', 'td', function(e){ // if pressed on an empty td of a meeting table,
         if($(this).data("empty")==true){              // focuses on meeting input and sets times of ddns
@@ -401,6 +403,15 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             $("#Modaltd"+i).removeClass('available');
             $("#Modaltd"+elementDay).addClass('unavailable');
             setElement(element);
+            
+                            $('.ui.modal').modal({
+                                onHide: function(){
+                        			console.log("Hidden")
+                         			$("#tableBodyModal").empty();
+                         			setSpan(undefined);
+                         			$("#submitSpan").attr("disabled", true);
+                        		}
+                            });
             
             
         }

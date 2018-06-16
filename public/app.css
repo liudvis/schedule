@@ -21,8 +21,13 @@
   padding-left: 5px;
 }
 
-#calendar, #calendarModal{
+#calendar{
   width: 350px;
+  margin: auto;
+}
+
+#calendarModal{
+  width:auto;
   margin: auto;
 }
 
