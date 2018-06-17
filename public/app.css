@@ -172,5 +172,10 @@ td:not(:empty):hover {
 /*  float: center;*/
 /*}*/
 
-
+.positive.ui.button {
+  float: right;
+  margin: 10px;
+  margin-right: 60px;
+  
+}
 

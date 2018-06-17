@@ -34,7 +34,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     });
     
     $("#upcomingHeader").on('click', function(e){ //shrinks the upcoming meetings&schedules preview
-        e.stopPropagation();
+        // e.stopPropagation();
         $("#nearestList").transition("fade");
         $("#arrowRotate").toggleClass("arrowRotateClass");
     });
@@ -409,6 +409,10 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                     $("#Modaltd"+i).addClass('unavailable');
                     console.log($("#Modaltd"+i).data());
             }
+            var today = new Date();
+            var dd = today.getDate();
+            $("#Modaltd"+dd).addClass('today');
+
             $("#Modaltd"+i).removeClass('available');
             $("#Modaltd"+elementDay).addClass('unavailable');
             setElement(element);
@@ -437,10 +441,10 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         this.elementValue = myArgument;
     }
     
-    function generateModel(){   
+    function generateModel(){  
         let modal = 
         '<div class="ui modal" id="myModal">\
-          <div class="header">Header</div>\
+          <div class="header">Select Day: </div>\
           <i class="close icon"></i>\
           <div class="content" >\
           <div id="calendarModal"></div>\
@@ -458,7 +462,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
               </tbody>\
               </table>\
           </div>\
-          <button class="positive ui button" id="submitSpan" disabled>Positive Button</button>\
+          <button class="positive ui button" id="submitSpan" disabled>OK</button>\
         </div>';
         return modal;
     }
