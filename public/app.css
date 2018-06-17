@@ -181,3 +181,8 @@ td:not(:empty):hover {
 .ui.message {
   margin: 25px;
 }
+
+.ui.messages {
+  position: absolute;
+  width : 200px;
+}
