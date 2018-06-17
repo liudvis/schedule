@@ -158,7 +158,8 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     });
         
     $("#smallcalendar").on("click", function(){ // when in single day view, pressing on the small calendar in top left redirects to calendar view
-        document.location.hash='';
+        		parent.history.back();
+
         // smallCalendarPopup();                       
     });
         
