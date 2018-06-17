@@ -11,6 +11,13 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     changingTimes();
     var selected;
     
+    $( window ).on( 'hashchange', function( e ) {
+        if(document.location.hash==''){
+            console.log("MIAU");
+                    smallCalendarPopup();                       
+        }
+    } );    
+    
     setTimeout(function() { //hides the login/registration message
         $(".messages").transition('fade up');
     }, 2000); 
@@ -151,7 +158,8 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     });
         
     $("#smallcalendar").on("click", function(){ // when in single day view, pressing on the small calendar in top left redirects to calendar view
-        smallCalendarPopup();                       
+        document.location.hash='';
+        // smallCalendarPopup();                       
     });
         
     $("#calendar").on("click", "td:not(:empty)", function() { // when pressed on a day in the calendar, redirects to single day view, retrieves data from api
@@ -428,7 +436,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         this.elementValue = myArgument;
     }
     
-    function generateModel(){   // id="myModal"   id="sudas"    <i class="close icon"></i>
+    function generateModel(){   
         let modal = 
         '<div class="ui modal" id="myModal">\
           <div class="header">Header</div>\
@@ -630,6 +638,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     // }
     
     function fillCalendar() { // generates the calendar
+        
         var date = new Date(), y = date.getFullYear(), m = date.getMonth();
         var firstDay = new Date(y, m, 1).getDate();
         var lastDay = new Date(y, m + 1, 0).getDate();
@@ -711,6 +720,11 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     
     function smallCalendarPopup () { //pressing on a small calendar icon to go back to main view
         
+        
+        document.location.hash.split('#')[0];
+
+
+
         for(var i=0; i<31; i++){ // reseting marked days
             $("#td"+i).removeClass( "markedDays" );
         }   
@@ -742,6 +756,9 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     
     function chosenDate(day){  // Displays the panel of chosen date (meeting, task lists, inputs), hides calendar
         selected = day;
+        
+        document.location.hash = "single";
+
         
         $("#upcomingMessage").transition('fade down');
         
