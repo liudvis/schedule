@@ -178,4 +178,6 @@ td:not(:empty):hover {
   margin-right: 60px;
   
 }
-
+.ui.message {
+  margin: 25px;
+}
