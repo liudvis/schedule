@@ -15,25 +15,26 @@
 
 <div class="ui stackable one column grid">
     <div class="column">
+      <div>  <% if(success && success.length > 0){ %>
+          <div class="ui success message messages" id="successMessage">
+        <div class="header">
+          <%= success %>
+        </div>
+        </div>
+        <% } %>
+          <% if(error && error.length > 0){ %>
+          <div class="ui error message messages">
+        <div class="header">
+          <%= error %>
+        </div>
+        </div>
+        <% } %>
+      </div>
 <div>
 <button class="ui primary button" id="smallcalendar"><span id="demo"></span>
   <i class="calendar alternate outline icon"></i>
 </button>
-<div>  <% if(success && success.length > 0){ %>
-    <div class="ui success message messages" id="successMessage">
-  <div class="header">
-    <%= success %>
-  </div>
-  </div>
-  <% } %>
-    <% if(error && error.length > 0){ %>
-    <div class="ui error message messages">
-  <div class="header">
-    <%= error %>
-  </div>
-  </div>
-  <% } %>
-</div>
+
 <div id="signedin"><span>Signed in as  <strong><%= currentUser %></strong></span>
                     <a href="/logout" data-ajax="false">  
                       <i class="fas fa-sign-out-alt fa-lg"></i></a> 

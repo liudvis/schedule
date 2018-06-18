@@ -17,6 +17,10 @@ var scheduleSchema = new mongoose.Schema({
         type: Number,
         required: 'specify a day'
     },
+    month: {
+        type: Number,
+        required: 'specify a month'
+    },
     meetingStart: {
         type:Number,
     },
