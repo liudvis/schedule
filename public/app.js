@@ -58,7 +58,8 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         else {
             let id = getSpan().data('id');
             let day = getSpan().data('day'); 
-            updateTodo(id, day-1, getElement(), 1);  // BBBBUUUUUUUUGGGGGGG
+            let month = getSpan().data('month');
+            updateTodo(id, day, getElement(), month, 1);  // BBBBUUUUUUUUGGGGGGG
             $("#myModal").modal("hide");
             $("#myModal").remove();
             setSpan(undefined);
@@ -70,18 +71,11 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         setSpan(undefined);
     });
     
-    function getSpan() { 
-        return this.value; 
-    }
     
-    function setSpan(myArgument) { 
-        this.value = myArgument;
-    }
 
     function coloringMarkedDays(){  //colors the days, which hold a meeting or a task.
         $.getJSON("/api/schedules", function(result){
             $.each(result, function(i, field){
-                console.log(calendarGetMonth().toString());
                 if( field.month==calendarGetMonth() ){
                     $("#td"+field.day).addClass("markedDays");
                 }
@@ -284,7 +278,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         selected++;
         $("#demo").text(selected);
         
-                var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
+        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
 
         
         setTimeout(function(){
@@ -332,7 +326,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     
     
     function fillCalendarModal(elementId) { // generates the calendar
-        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var date = new Date(), y = date.getFullYear(), m = calendarGetMonth();
         var firstDay = new Date(y, m, 1).getDate();
         var lastDay = new Date(y, m + 1, 0).getDate();
         var firstWeekDay = new Date(y, m, 1).getDay();
@@ -360,13 +354,15 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                     if(theDAY==0){
                         newDate = newDate.data('id', elementId);
                         newDate.data('day', i);
-                        newDate = $('<td class="available" id="Modaltd'+i+'">'+i+'</td>');
+                        newDate.data('month', calendarGetMonth());
+                        newDate = $('<td class="available '+calendarGetMonth()+'" id="Modaltd'+i+'">'+i+'</td>');
                         $('#tableBodyModal').append(newDate);
                         $('#tableBodyModal').append($('</tr><tr>'));
                     } else {
                         newDate = newDate.data('id', elementId);
                         newDate.data('day', i);
-                        newDate = $('<td class="available" id="Modaltd'+i+'">'+i+'</td>');
+                        newDate.data('month', calendarGetMonth());
+                        newDate = $('<td class="available '+calendarGetMonth()+'" id="Modaltd'+i+'">'+i+'</td>');
                         $('#tableBodyModal').append(newDate);
                     }   
                     theDAY++;
@@ -377,38 +373,54 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         let element = arg.parent().parent().parent();
         let elementId = arg.parent().parent().parent().data('id');
         let elementDay = arg.parent().parent().parent().data('day');
+        let elementMonth = arg.parent().parent().parent().data('month');
         console.log(elementDay);
         
         if(arg.val()==0){
-            updateTodo(elementId, elementDay+1, element, arg.val()); //moving to tomorrow
+            updateTodo(elementId, elementDay+1, element, elementMonth, arg.val()); //moving to tomorrow
         }
         else if(arg.val()==1){ // moving to another day
- 
             $('body').append(generateModel());
             fillCalendarModal(elementId);
             $("#myModal").append();
             $("#myModal").modal('show');
+
+            var miau = new Date();
+            var dd = miau.getDate();
             
-            var today = new Date();
-            var dd = today.getDate();
-            
-            for(var i=1; i<=dd; i++){
-                $("#Modaltd"+i).removeClass('available');
-                $("#Modaltd"+i).addClass('unavailable');
-                console.log($("#Modaltd"+i).data());
+            if(calendarGetMonth()==getCurrentMonth()){
+                for(var i=1; i<=dd; i++){
+                    $("#Modaltd"+i).removeClass('available');
+                    $("#Modaltd"+i).addClass('unavailable');
+                    console.log($("#Modaltd"+i).data());
+                }
+            } else {
+                for(var i=1; i<=dd; i++){
+                    $("#Modaltd"+i).removeClass('available');
+                    console.log($("#Modaltd"+i).data());
+                }
             }
+            
             $("#Modaltd"+elementDay).addClass('today');
 
             $("#Modaltd"+i).removeClass('available');
             $("#Modaltd"+elementDay).addClass('unavailable');
             setElement(element);
             
+            console.log("GET SPAN"+getSpan())
+
             $('.ui.modal').modal({
                 onHide: function(){
+                    console.log(calendarGetMonth());
         			console.log("Hidden");
          			$("#tableBodyModal").empty();
-         			setSpan(undefined);
+         			console.log("GET SPAN"+getSpan())
+
+         			// setSpan(undefined);
+                     console.log(calendarGetMonth());
          			$("#submitSpan").attr("disabled", true);
+         			            console.log("GET SPAN"+getSpan())
+
         		}
             });
             
@@ -433,7 +445,6 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
           <div class="header">Select Day: </div>\
           <i class="close icon"></i>\
           <div class="content" >\
-          <div id="calendarModal"></div>\
             <table class="ui celled striped table unstackable" id="calendarModal">\
               <thead>\
                 <tr><th>M</th>\
@@ -578,9 +589,9 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         });
     }
     
-    function updateTodo(todoId, todoDay, element, ddnOption){  //takes schedules id, updates it
+    function updateTodo(todoId, todoDay, element, todoMonth, ddnOption){  //takes schedules id, updates it
         var updateUrl = '/api/schedules/' + todoId;
-        var updateData ={day: todoDay};
+        var updateData ={day: todoDay, month: todoMonth};
         
         $.ajax({
             method: 'PUT',
@@ -805,7 +816,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#tableBody").empty();
         fillCalendar(calendarGetMonth());
         coloringMarkedDays();
-                    todaysDate();
+        todaysDate();
 
         $("#demo1").transition("fade left");
         // $(".list").empty();
@@ -831,7 +842,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#tableBody").empty();
         fillCalendar(calendarGetMonth());
         coloringMarkedDays();
-                    todaysDate();
+        todaysDate();
 
         
         
@@ -851,6 +862,11 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     function calendarSetMonth(month){
         this.value=month;
     }
-        
+    function getSpan() { 
+        return this.value1; 
+    }
+    function setSpan(myArgument) { 
+        this.value1 = myArgument;
+    }
     
 });
