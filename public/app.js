@@ -404,15 +404,11 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                 }
             } 
             else {
-                for(var i=1; i<=dd; i++){
+                for(var i=1; i<dd; i++){
                     $("#Modaltd"+i).removeClass('available');
                     console.log($("#Modaltd"+i).data());
                 }
             }
-            
-            $("#Modaltd"+i).removeClass('available');
-
-            
             $("#Modaltd"+dd).addClass('today');
 
             $("#Modaltd"+elementDay).addClass('unavailable');
