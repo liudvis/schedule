@@ -5,11 +5,10 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page 
     
     var selected;
+    
     calendarSetMonth(getCurrentMonth());
     
-    console.log("Get current Month when loaded   "+getCurrentMonth());
-    
-    fillCalendar(getCurrentMonth()); 
+    fillCalendar(calendarGetMonth()); 
     hidingElements(); 
     coloringMarkedDays();
     changingTimes();
@@ -44,6 +43,12 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#arrowRotate").toggleClass("arrowRotateClass");
     });
     
+    $(document).on("click", "td", function(event){ 
+        console.log($(this).data());
+        console.log($(this).attr("id"));
+    });
+    
+    
     $(document).on("click", ".available", function(event){ // ON EVENT FIRED
         $("#submitSpan").removeAttr('disabled');
         $(".available").removeClass("selectedModalTd");
@@ -59,6 +64,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             let id = getSpan().data('id');
             let day = getSpan().data('day'); 
             let month = getSpan().data('month');
+
             updateTodo(id, day, getElement(), month, 1);  // BBBBUUUUUUUUGGGGGGG
             $("#myModal").modal("hide");
             $("#myModal").remove();
@@ -70,8 +76,6 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#myModal").effect("shake");
         setSpan(undefined);
     });
-    
-    
 
     function coloringMarkedDays(){  //colors the days, which hold a meeting or a task.
         $.getJSON("/api/schedules", function(result){
@@ -140,7 +144,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         
     $("#demo1").on("click", "i", function(e) { // pressing on an arrow switches to another days view
         e.stopPropagation();
-        var date = new Date(), y = date.getFullYear(), m = date.getMonth();
+        var date = new Date(), y = date.getFullYear(), m = calendarGetMonth();
         var lastDay = new Date(y, m + 1, 0).getDate();
         
         if(this.id=="changeToNextDay" && selected<lastDay){
@@ -352,17 +356,17 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                         theDAY=0;
                     }
                     if(theDAY==0){
-                        newDate = newDate.data('id', elementId);
+                        newDate = $('<td class="available '+calendarGetMonth()+'" id="Modaltd'+i+'">'+i+'</td>');
+                        newDate.data('id', elementId);
                         newDate.data('day', i);
                         newDate.data('month', calendarGetMonth());
-                        newDate = $('<td class="available '+calendarGetMonth()+'" id="Modaltd'+i+'">'+i+'</td>');
                         $('#tableBodyModal').append(newDate);
                         $('#tableBodyModal').append($('</tr><tr>'));
                     } else {
-                        newDate = newDate.data('id', elementId);
+                        newDate = $('<td class="available '+calendarGetMonth()+'" id="Modaltd'+i+'">'+i+'</td>');
+                        newDate.data('id', elementId);
                         newDate.data('day', i);
                         newDate.data('month', calendarGetMonth());
-                        newDate = $('<td class="available '+calendarGetMonth()+'" id="Modaltd'+i+'">'+i+'</td>');
                         $('#tableBodyModal').append(newDate);
                     }   
                     theDAY++;
@@ -388,43 +392,38 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             var miau = new Date();
             var dd = miau.getDate();
             
+            for(var i=0; i<dd; i++){
+                    console.log($("#Modaltd"+i).data());
+                }
+            
             if(calendarGetMonth()==getCurrentMonth()){
-                for(var i=1; i<=dd; i++){
+                for(var i=1; i<dd; i++){
                     $("#Modaltd"+i).removeClass('available');
                     $("#Modaltd"+i).addClass('unavailable');
                     console.log($("#Modaltd"+i).data());
                 }
-            } else {
+            } 
+            else {
                 for(var i=1; i<=dd; i++){
                     $("#Modaltd"+i).removeClass('available');
                     console.log($("#Modaltd"+i).data());
                 }
             }
             
-            $("#Modaltd"+elementDay).addClass('today');
-
             $("#Modaltd"+i).removeClass('available');
+
+            
+            $("#Modaltd"+dd).addClass('today');
+
             $("#Modaltd"+elementDay).addClass('unavailable');
             setElement(element);
             
-            console.log("GET SPAN"+getSpan())
-
             $('.ui.modal').modal({
                 onHide: function(){
-                    console.log(calendarGetMonth());
-        			console.log("Hidden");
          			$("#tableBodyModal").empty();
-         			console.log("GET SPAN"+getSpan())
-
-         			// setSpan(undefined);
-                     console.log(calendarGetMonth());
          			$("#submitSpan").attr("disabled", true);
-         			            console.log("GET SPAN"+getSpan())
-
         		}
             });
-            
-            
         }
         else if(arg.val()==2){   
             deleteSchedule(elementId, element);
@@ -657,15 +656,15 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                         theDAY=0;
                     }
                     if(theDAY==0){
+                        newDate = $('<td class="'+m+'"id="td'+i+'">'+i+'</td>');
                         newDate.data("month", m);
                         newDate.data("day", i);
-                        newDate = $('<td class="'+m+'"id="td'+i+'">'+i+'</td>');
                         $('#tableBody').append(newDate);
                         $('#tableBody').append($('</tr><tr>'));
                     } else {
+                        newDate = $('<td class="'+m+'" id="td'+i+'">'+i+'</td>');
                         newDate.data("month", m);
                         newDate.data("day", i);
-                        newDate = $('<td class="'+m+'" id="td'+i+'">'+i+'</td>');
                         $('#tableBody').append(newDate);
                     }   
                     theDAY++;
@@ -804,7 +803,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     
     function getNextMonth(){      // when pressed on an arrow in month view, switched to next month's view 
         $("#demo1").transition("fade right");
-        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         
         var miau = (calendarGetMonth())+1;
         calendarSetMonth(miau);
