@@ -344,6 +344,10 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                         $('#tableBodyModal').append(newDate);
                         theDAY=firstWeekDay;
                     }
+                } else if(firstWeekDay==1){
+                        $('#tableBody').append(newDate);
+                        theDAY=firstWeekDay;
+                
                 } else {
                     for(let i=1; i<firstWeekDay; i++){
                         theDAY=firstWeekDay;
@@ -640,13 +644,18 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                         $('#tableBody').append(newDate);
                         theDAY=firstWeekDay;
                     }
-                } else {
+                } else if(firstWeekDay==1){
+                        $('#tableBody').append(newDate);
+                        theDAY=firstWeekDay;
+                }
+                else {
                     for(let i=1; i<firstWeekDay; i++){
                         theDAY=firstWeekDay;
                         newDate = $('<td></td>');
                         $('#tableBody').append(newDate);
                     }
                 }
+        
                 for (var i=firstDay; i<=lastDay; i++){
                     if(theDAY==7){
                         theDAY=0;
