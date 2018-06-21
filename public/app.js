@@ -912,7 +912,7 @@ $(document).ready(function(){ // myModal, calendar
         }, 200);
         todaysDate();
     }
-
+    console.log("miau")
 
     
     function calendarGetMonth(){
