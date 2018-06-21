@@ -1,10 +1,8 @@
 /*global $ */
 /*global navigator */
 
-$(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????? GET&SET selected /////
+$(document).ready(function(){ // myModal, calendar
     $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page 
-    
-    var selected;
     
     calendarSetMonth(getCurrentMonth());
     
@@ -12,7 +10,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     hidingElements(); 
     coloringPastDays();
     coloringMarkedDays();
-    changingTimes();
+    changingTimesOfDropdowns();
     $('#dropdown1').dropdown();
     $('#dropdown2').dropdown();
     nearestMeetings();
@@ -106,22 +104,22 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
       
     $('#task').keypress(function(event){ // when enter is pressed in the task field, a task is created
         if(event.keyCode===13){
-            createTodo(selected);                       
+            createTodo(getSelectedDay());                       
         }
     });
     
     $('#meeting').keypress(function(event){ // when enter is pressed in the meeting field, meeting is created
         if(event.keyCode===13){
-            createMeeting(selected);                    
+            createMeeting(getSelectedDay());                    
         }
     });
     
     $("#submitMeeting").on("click", function(){
-        createMeeting(selected);                    // when pressed on a plus button, meeting is created
+        createMeeting(getSelectedDay());                    // when pressed on a plus button, meeting is created
     });
     
     $("#submitTask").on("click", function(){    //when pressed on a plus button, task is created
-        createTodo(selected);                    
+        createTodo(getSelectedDay());                    
     });
         
     $("#smallcalendar").on("click", function(){ // when in single day view, pressing on the small calendar in top left redirects to calendar view
@@ -129,7 +127,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     });
         
     $("#calendar").on("click", "td:not(:empty)", function() { // when pressed on a day in the calendar, redirects to single day view, retrieves data from api
-        selected = chosenDate($(this).text()); 
+        getSelectedDay(chosenDate($(this).text())); 
         meetingTableAndTaskList();
         $.getJSON("/api/schedules")
             .then(addSchedules);
@@ -140,10 +138,10 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         var date = new Date(), y = date.getFullYear(), m = calendarGetMonth();
         var lastDay = new Date(y, m + 1, 0).getDate();
         
-        if(this.id=="changeToNextDay" && selected<lastDay){
+        if(this.id=="changeToNextDay" && getSelectedDay()<lastDay){
             getNextDay();
         }
-        else if (this.id=="changeToBeforeDay" && selected>1){
+        else if (this.id=="changeToBeforeDay" && getSelectedDay()>1){
             getPreviousDay();
         }
         else if (this.id=="changeToBeforeMonth" && calendarGetMonth()>0){
@@ -173,7 +171,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         
     $("#nearestList").on("click", "span", function(e) { // pressing on an element of nearest meetings&tasks panel, 
         var miau = ($(this).attr('id'));                //redirects to single day view of that element
-        selected = chosenDate(miau); 
+        setSelectedDay(chosenDate(miau)); 
         meetingTableAndTaskList();
         
         $.getJSON("/api/schedules")
@@ -190,7 +188,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             e.stopPropagation();    //changes view to next day
             var date = new Date(), y = date.getFullYear(), m = date.getMonth();
             var lastDay = new Date(y, m + 1, 0).getDate();
-            if(selected<lastDay){
+            if(getSelectedDay()<lastDay){
                 getNextDay();
             }
         }
@@ -204,8 +202,36 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             }); 
         } else {
             e.stopPropagation();    //changes view to previous day
-            if(selected>1){
+            if(getSelectedDay()>1){
                 getPreviousDay();
+            }
+        }
+    });
+    
+    $("#calendar").on("swipeleft", function(e) {
+        if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
+            $(document).on('swipeleft', 'html', function(event) {  // swipe on desktop disabled
+                event.stopPropagation();
+                event.preventDefault();
+            });                 
+        } else {
+            if(this.id=="changeToNextMonth" && calendarGetMonth()<11){
+                console.log("Change to Next Month");
+                getNextMonth();
+            }
+        }
+    });
+    
+    $("#calendar").on("swiperight", function(e) {
+        if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
+            $(document).on('swiperight', 'html', function(event) {  // swipe on desktop disabled
+                event.stopPropagation();
+                event.preventDefault();
+            });                 
+        } else {
+            if (this.id=="changeToBeforeMonth" && calendarGetMonth()>0){
+                console.log("Change to Previous Month");
+                getPreviousMonth();
             }
         }
     });
@@ -219,17 +245,16 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     }
     
     function addSchedule(schedule){     // appends and puts information accordingly for a single schedule element after the ajax call
-        if(selected == schedule.day && schedule.month == calendarGetMonth()){
-            console.log("schedule.month="+schedule.month+"; getCurrentMonth()"+calendarGetMonth());
+        if(getSelectedDay() == schedule.day && schedule.month == calendarGetMonth()){
             if(schedule.type==="meeting"){
                 var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
                 newMeeting.data('id', schedule._id);
                 newMeeting.data('startTime', schedule.meetingStart);
                 newMeeting.data('endTime', schedule.meetingEnd);
-                for(var i=schedule.meetingStart; i<schedule.meetingEnd; i++){
-                    $('#time'+i).data('empty', false);
-                    $('#time'+i).data('id', schedule._id);
-                }
+                    for(var i=schedule.meetingStart; i<schedule.meetingEnd; i++){
+                        $('#time'+i).data('empty', false);
+                        $('#time'+i).data('id', schedule._id);
+                    }
                 $('#time'+schedule.meetingStart).html(newMeeting);
                 $('.ui.dropdown').dropdown('restore defaults');
             } else if (schedule.type==="todo"){
@@ -263,12 +288,11 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         var startOfTheMeeting = $('#dropdown1').dropdown('get value');
         var endOfTheMeeting = $('#dropdown2').find(":selected").val();
         var nameOfTheMeeting = $('#meeting').val();
-        var check = checkingTimeMeeting(Number(startOfTheMeeting), Number(endOfTheMeeting));
-        
-        if(nameOfTheMeeting=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End" || check==false) {
+
+        if(nameOfTheMeeting=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End"){
             $('#meetingInput').effect("shake");
         } else {
-            $.post('/api/schedules',{name: nameOfTheMeeting, type: "meeting", day: day, meetingStart: startOfTheMeeting, meetingEnd: endOfTheMeeting, month: calendarGetMonth})
+            $.post('/api/schedules',{name: nameOfTheMeeting, type: "meeting", day: day, meetingStart: startOfTheMeeting, meetingEnd: endOfTheMeeting, month: calendarGetMonth()})
             .then(function(newMeeting){
                 addSchedule(newMeeting);
                 $('#meeting').val('');
@@ -280,19 +304,10 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         }
     }
     
-    function checkingTimeMeeting(startOfTheMeeting, endOfTheMeeting){ // ???? not needed????
-        for(var i=startOfTheMeeting; i<endOfTheMeeting; i++){
-            if($('#time'+i).data('empty')==false){
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    function changingTimes () {     // adjusting times in the meeting input dropdowns
+    function changingTimesOfDropdowns () {     // adjusting times in the meeting input dropdowns
         $('#dropdown1').dropdown({ onChange: function(value, $choise){
             var arr= [];
-            var value = $('#dropdown1').dropdown('get value');
+            value = $('#dropdown1').dropdown('get value');
                 if(value==""){
                     value=10;
                 }
@@ -405,59 +420,45 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     }
     
     function getNextMonth(){      // when pressed on an arrow in month view, switched to next month's view 
-        $("#demo1").transition("fade right");
-        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        $("#demo1").transition("fade left");
+        $("#calendar").transition("fade left");
         
         var miau = (calendarGetMonth())+1;
         calendarSetMonth(miau);
 
         setTimeout(function(){
-            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeMonth"></i><i class="calendar alternate outline icon"></i>'+months[calendarGetMonth()]+'<i class="caret right icon" id="changeToNextMonth"></i></div>');
+            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeMonth"></i><i class="calendar alternate outline icon"></i>'+monthNumberToWord(calendarGetMonth())+'<i class="caret right icon" id="changeToNextMonth"></i></div>');
         }, 200);
         
         $("#tableBody").empty();
+        $("#calendar").transition("fade right");
         fillCalendar(calendarGetMonth());
         coloringPastDays();
         coloringMarkedDays();
         todaysDate();
 
-        $("#demo1").transition("fade left");
-        // $(".list").empty();
-        // $("#meetingTable").empty();
-        // meetingTableAndTaskList();
-        // $("#meetingTable").transition("fade left");
-        // $(".list").transition("fade left");
-        // $.getJSON("/api/schedules")
-        // .then(addSchedules);
+        $("#demo1").transition("fade right");
     }
     
     function getPreviousMonth(){      // when pressed on an arrow in month view, switched to next month's view 
         $("#demo1").transition("fade right");
+        $("#calendar").transition("fade right");
         
-        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         var miau = (calendarGetMonth())-1;
         calendarSetMonth(miau);
 
         setTimeout(function(){
-            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeMonth"></i><i class="calendar alternate outline icon"></i>'+months[calendarGetMonth()]+'<i class="caret right icon" id="changeToNextMonth"></i></div>');
+            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeMonth"></i><i class="calendar alternate outline icon"></i>'+monthNumberToWord(calendarGetMonth())+'<i class="caret right icon" id="changeToNextMonth"></i></div>');
         }, 200);
         
         $("#tableBody").empty();
+        $("#calendar").transition("fade left");
         fillCalendar(calendarGetMonth());
         coloringPastDays();
         coloringMarkedDays();
         todaysDate();
 
-        
-        
         $("#demo1").transition("fade left");
-        // $(".list").empty();
-        // $("#meetingTable").empty();
-        // meetingTableAndTaskList();
-        // $("#meetingTable").transition("fade left");
-        // $(".list").transition("fade left");
-        // $.getJSON("/api/schedules")
-        // .then(addSchedules);
     }
     
     
@@ -477,14 +478,13 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#demo1").transition("fade right");
         $("#meetingTable").transition("fade right");
         $(".list").transition("fade right");
+        var selected=getSelectedDay();
         selected++;
-        $("#demo").text(selected);
-        
-        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
+        setSelectedDay(selected);
+        $("#demo").text(getSelectedDay());
         
         setTimeout(function(){
-            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeDay"></i>'+selected+" of "+months[calendarGetMonth()] + ", "+getDayOfTheWeek(selected)+'<i class="caret right icon" id="changeToNextDay"></i></div>');
+            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeDay"></i>'+getSelectedDay()+" of "+monthNumberToWord(calendarGetMonth()) + ", "+getDayOfTheWeek(getSelectedDay())+'<i class="caret right icon" id="changeToNextDay"></i></div>');
         }, 200);
         
         $("#demo1").transition("fade left");
@@ -498,16 +498,17 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     }
     
     function getPreviousDay(){    // when pressed on an arrow in single day view, switched to before day's view 
+        var selected=getSelectedDay();
         selected--;
-        $("#demo").text(selected);
+        setSelectedDay(selected);
+        
+        $("#demo").text(getSelectedDay());
         $("#demo1").transition("fade left");
         $("#meetingTable").transition("fade left");
         $(".list").transition("fade left");
         
-        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        
         setTimeout(function(){
-            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeDay"></i>'+selected+" of " +months[calendarGetMonth()] + ", "+getDayOfTheWeek(selected)+'<i class="caret right icon" id="changeToNextDay"></i></div>');
+            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeDay"></i>'+getSelectedDay()+" of " +monthNumberToWord(calendarGetMonth()) + ", "+getDayOfTheWeek(getSelectedDay())+'<i class="caret right icon" id="changeToNextDay"></i></div>');
         }, 200);
         
         $("#demo1").transition("fade right");
@@ -580,7 +581,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     function ddnButton (schedule){   //generating ddn buttons for elements
         if(schedule.type==="todo"){
             var ddnTodo= 
-            '<div class="dropdown" style="float:right;">\
+                '<div class="dropdown" style="float:right;">\
                   <button class="dropbtn"><i class="ellipsis horizontal icon"></i></button>\
                   <div class="dropdown-content">\
                     <option value="0">Move to tomorrow</option>\
@@ -591,7 +592,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             return ddnTodo;
         } else {
             var ddnMeeting = 
-                    '<div class="dropdown" style="float:right;">\
+                '<div class="dropdown" style="float:right;">\
                   <button class="dropbtn"><i class="ellipsis horizontal icon"></i></button>\
                   <div class="dropdown-content">\
                     <option value="2">Delete</option>\
@@ -667,7 +668,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
               </tbody>\
               </table>\
           </div>\
-          <div><i class="caret left icon" id="changeToBeforeMonthModal"></i><span id="modalSpan"></span><i class="caret right icon" id="changeToNextMonthModal"></i></div>\
+          <div><i class="caret left icon" id="changeToBeforeMonthModal"></i><span id="modalSpan">'+monthNumberToWord(calendarGetMonth())+'</span><i class="caret right icon" id="changeToNextMonthModal"></i></div>\
           <button class="positive ui button" id="submitSpan" disabled>OK</button>\
         </div>';
         return modal;
@@ -719,19 +720,16 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                     }   
                     theDAY++;
                 }
-                $("#modalSpan").text(calendarGetMonth());
     }
     
     function getNextMonthModal(){      // when pressed on an arrow in month view, switched to next month's view 
-        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
         var increaseByOne = (calendarGetMonth())+1;
         calendarSetMonth(increaseByOne);
 
         
         $("#tableBodyModal").empty();
         fillCalendarModal(getId());
-        $("#modalSpan").text(months[calendarGetMonth()]);
+        $("#modalSpan").text(monthNumberToWord(calendarGetMonth()));
         
         var miau = new Date();
         var dd = miau.getDate();
@@ -746,13 +744,12 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     }
     
     function getPreviousMonthModal(){      // when pressed on an arrow in month view, switched to next month's view 
-        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         var decreaseByOne = (calendarGetMonth())-1;
         calendarSetMonth(decreaseByOne);
         
         $("#tableBodyModal").empty();
         fillCalendarModal(getId());
-        $("#modalSpan").text(months[calendarGetMonth()]);
+        $("#modalSpan").text(monthNumberToWord(calendarGetMonth()));
         
         var miau = new Date();
         var dd = miau.getDate();
@@ -830,11 +827,9 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
 
 
     function chosenDate(day){  // Displays the panel of chosen date (meeting, task lists, inputs), hides calendar
-        selected = day;
+        setSelectedDay(day);
         document.location.hash = "singleDayView";
-        
-        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        
+    
         $("#upcomingMessage").transition('fade down');
         
         $("#calendar").transition({
@@ -850,7 +845,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                     // $('#taskList').transition("fade down");
                     $("#demo").text(day);
                     $("#demo").transition("fade down");
-                    $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeDay"></i>'+day+" of " +months[calendarGetMonth()] + ", "+getDayOfTheWeek(day)+'<i class="caret right icon" id="changeToNextDay"></i></div>');
+                    $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeDay"></i>'+day+" of " +monthNumberToWord(calendarGetMonth()) + ", "+getDayOfTheWeek(day)+'<i class="caret right icon" id="changeToNextDay"></i></div>');
                 }   
         });         
         return day;
@@ -859,12 +854,10 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     function smallCalendarPopup () { //pressing on a small calendar icon to go back to main view
         document.location.hash.split('#')[0];
         
-        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-
         console.log(calendarGetMonth());
 
         setTimeout(function(){
-            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeMonth"></i><i class="calendar alternate outline icon"></i>'+months[calendarGetMonth()]+'<i class="caret right icon" id="changeToNextMonth"></i></div>');
+            $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeMonth"></i><i class="calendar alternate outline icon"></i>'+monthNumberToWord(calendarGetMonth())+'<i class="caret right icon" id="changeToNextMonth"></i></div>');
         }, 200);
         
         $("#tableBody").empty();
@@ -952,6 +945,12 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     function setElement(myArgument) { 
         this.elementValue = myArgument;
     }
+    function setSelectedDay(day){
+        this.selectedDay=day;
+    }
+    function getSelectedDay(){
+        return this.selectedDay;
+    }
     
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -978,5 +977,10 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     //         addSchedule(data);
     //       });
     // }
+
+    function monthNumberToWord(month){
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        return months[month];
+    }
 
 });
