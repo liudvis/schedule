@@ -10,13 +10,14 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     
     fillCalendar(calendarGetMonth()); 
     hidingElements(); 
+    coloringPastDays();
     coloringMarkedDays();
     changingTimes();
     $('#dropdown1').dropdown();
     $('#dropdown2').dropdown();
     nearestMeetings();
     
-    $(window).on('hashchange', function(e){
+    $(window).on('hashchange', function(e){ //Back button fix
         if(document.location.hash==''){
             smallCalendarPopup();                       
         }
@@ -48,7 +49,6 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         console.log($(this).attr("id"));
     });
     
-    
     $(document).on("click", ".available", function(event){ // ON EVENT FIRED
         $("#submitSpan").removeAttr('disabled');
         $(".available").removeClass("selectedModalTd");
@@ -64,11 +64,14 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             let id = getSpan().data('id');
             let day = getSpan().data('day'); 
             let month = getSpan().data('month');
+            
+            console.log(id + " "+ day+ " " + month +" ");
 
-            updateTodo(id, day, getElement(), month, 1);  // BBBBUUUUUUUUGGGGGGG
+            updateTodo(id, day, getElement(), month, 1); 
             $("#myModal").modal("hide");
             $("#myModal").remove();
             setSpan(undefined);
+            console.log(calendarGetMonth());
         }
     });
     
@@ -76,16 +79,6 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#myModal").effect("shake");
         setSpan(undefined);
     });
-
-    function coloringMarkedDays(){  //colors the days, which hold a meeting or a task.
-        $.getJSON("/api/schedules", function(result){
-            $.each(result, function(i, field){
-                if( field.month==calendarGetMonth() ){
-                    $("#td"+field.day).addClass("markedDays");
-                }
-            });
-        });
-    }
 
     $('#taskList').on('click', 'div.item', function(e){ //crosses out a task (if its done)
         ($(this)).toggleClass('done', 200);         
@@ -153,13 +146,28 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         else if (this.id=="changeToBeforeDay" && selected>1){
             getBeforeDay();
         }
-        else if (this.id=="changeToBeforeMonth"){
+        else if (this.id=="changeToBeforeMonth" && calendarGetMonth()>0){
             console.log("Change to Previous Month");
             getBeforeMonth();
         }
-        else if(this.id=="changeToNextMonth"){
+        else if(this.id=="changeToNextMonth" && calendarGetMonth()<11){
             console.log("Change to Next Month");
             getNextMonth();
+        }
+    });
+    
+    $(document).on("click", "i", function(e) { // pressing on an arrow switches to another days view
+        // e.stopPropagation();
+        // var date = new Date(), y = date.getFullYear(), m = calendarGetMonth();
+        // var lastDay = new Date(y, m + 1, 0).getDate();
+        console.log("clicked")
+        if (this.id=="changeToBeforeMonthModal" && calendarGetMonth()>getCurrentMonth()){
+            console.log("Change to Previous Month Modal");
+            getBeforeMonthModal();
+        }
+        else if(this.id=="changeToNextMonthModal" && calendarGetMonth()<11){
+            console.log("Change to Next Month Modal");
+            getNextMonthModal();
         }
     });
         
@@ -201,6 +209,35 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             }
         }
     });
+    
+    function coloringMarkedDays(){  //colors the days, which hold a meeting or a task.
+        $.getJSON("/api/schedules", function(result){
+            $.each(result, function(i, field){
+                if( field.month==calendarGetMonth() ){
+                    $("#td"+field.day).addClass("markedDays");
+                }
+            });
+        });
+    }
+    
+    function coloringPastDays(){
+        var date = new Date(), y = date.getFullYear(), m = calendarGetMonth();
+        
+        var lastDay = new Date(y, m + 1, 0).getDate();
+        
+        for(let i=1; i<=lastDay; i++){
+        if( $("#td"+i).data("month")<getCurrentMonth() ){
+            console.log(i);
+            console.log(calendarGetMonth());
+            $("#td"+i).addClass("pastDays");
+        }
+        if( $("#td"+i).data("month")==getCurrentMonth() ){
+            if(i<todaysDate()){
+                $("#td"+i).addClass("pastDays");
+            }
+        }
+        }
+    }
         
     function nearestMeetings(){
         var today = new Date();
@@ -210,7 +247,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         
         $.getJSON("/api/schedules", function(result){
             $.each(result, function(i, field){          //Putting elements to according arrays
-                if(field.day>=dd && field.day<=dd+3){
+                if(field.day>=dd && field.day<=dd+3 && field.month==getCurrentMonth()){
                     if(field.type=="meeting"){
                         meetings.push(field);
                     } else {
@@ -282,7 +319,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         selected++;
         $("#demo").text(selected);
         
-        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
         
         setTimeout(function(){
@@ -306,7 +343,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#meetingTable").transition("fade left");
         $(".list").transition("fade left");
         
-        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         
         setTimeout(function(){
             $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeDay"></i>'+selected+" of " +months[calendarGetMonth()] + ", "+getDayOfTheWeek(selected)+'<i class="caret right icon" id="changeToNextDay"></i></div>');
@@ -327,7 +364,6 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             addSchedule(schedule);
         });
     }
-    
     
     function fillCalendarModal(elementId) { // generates the calendar
         var date = new Date(), y = date.getFullYear(), m = calendarGetMonth();
@@ -375,6 +411,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                     }   
                     theDAY++;
                 }
+                $("#modalSpan").text(calendarGetMonth());
     }
         
     function dropdownDeleteAndMoveToTomorrow(arg){ // functionality for deleting and updating elements
@@ -396,25 +433,17 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             var miau = new Date();
             var dd = miau.getDate();
             
-            for(var i=0; i<dd; i++){
-                    console.log($("#Modaltd"+i).data());
-                }
-            
-            if(calendarGetMonth()==getCurrentMonth()){
+            if(getCurrentMonth()==calendarGetMonth()){
                 for(var i=1; i<dd; i++){
                     $("#Modaltd"+i).removeClass('available');
                     $("#Modaltd"+i).addClass('unavailable');
-                    console.log($("#Modaltd"+i).data());
                 }
+                $("#Modaltd"+dd).addClass('today');
             } 
-            else {
-                for(var i=1; i<dd; i++){
-                    $("#Modaltd"+i).removeClass('available');
-                    console.log($("#Modaltd"+i).data());
-                }
-            }
-            $("#Modaltd"+dd).addClass('today');
-
+            setId(elementId);
+            setElementDay(elementDay);
+            console.log("miaju")
+            $("#Modaltd"+elementDay).removeClass('available');
             $("#Modaltd"+elementDay).addClass('unavailable');
             setElement(element);
             
@@ -458,6 +487,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
               </tbody>\
               </table>\
           </div>\
+          <div><i class="caret left icon" id="changeToBeforeMonthModal"></i><span id="modalSpan"></span><i class="caret right icon" id="changeToNextMonthModal"></i></div>\
           <button class="positive ui button" id="submitSpan" disabled>OK</button>\
         </div>';
         return modal;
@@ -487,7 +517,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         }
     }
     
-        // function colors () {
+    // function colors () {
         //     var arr =["#f1ddf2", "#fff6ec", "#e7ebec", "#eafeec", "#eaeed2", "#eadcd2", "#cadcd2", "#cac8d2", "#b9c8d2", "#b9b3d2"];
         //     var i = Math.floor(Math.random() * Math.floor(arr.length));
         //     console.log(arr[i]);
@@ -520,7 +550,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     
     function createTodo(day){    // takes user input and creates a todo
         var userInput = $('#task').val();
-        if(userInput=="") {
+        if(userInput=="" /* || $(selected).hasClass("pastDays")*/) {
             $('#field2').effect("shake");
         } else {
         $.post('/api/schedules',{name: userInput, type: "todo", day: day, month: calendarGetMonth()})
@@ -533,7 +563,6 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         });
     }
     }
-    
     
     function checkingTime(startOfTheMeeting, endOfTheMeeting){ // ???? not needed????
         for(var i=startOfTheMeeting; i<endOfTheMeeting; i++){
@@ -604,7 +633,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
                 });
             } else {
                 setTimeout(function(){  
-                    element.html('<div>Moved to '+todoDay+'th <i class="check icon"></i></div>');
+                    element.html('<div>Moved to '+todoDay+" of "+todoMonth+'th <i class="check icon"></i></div>');
                     element.addClass('elementChange').delay(1000).slideUp(700,function(){
                     });
                 }, 100);
@@ -700,7 +729,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
             $("#time"+i).data("time", i);
             $('#time'+i).data('empty', true);
             $('#time'+i).data('id', null);
-          }
+        }
     }
   
     function todaysDate(){ // Gives a border to a todays day in the calendar
@@ -710,10 +739,11 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         if($("#td"+dd).attr("class")==getCurrentMonth()){
             $("#td"+dd).addClass('today');
         }
+        return dd;
     }
 
     function getMonth(){ //return month
-        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         var today = new Date();
         // var dd = today.getDate();
         var mm = today.getMonth(); 
@@ -725,8 +755,6 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         return   today.getMonth();
     }
     
-    
-    
     function getDayOfTheWeek(day){ //returns day of the week in a word format
         var weekDays = ["Sunday","Monday","Tuesday","Wendesday","Thursday","Friday","Saturday"];
         var selectedDay = new Date((new Date()).getFullYear()+ getMonth().toString() +" "+day.toString());
@@ -737,17 +765,22 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     function smallCalendarPopup () { //pressing on a small calendar icon to go back to main view
         document.location.hash.split('#')[0];
         
-        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
+        console.log(calendarGetMonth());
 
         setTimeout(function(){
             $("#demo1").html('<div><i class="caret left icon" id="changeToBeforeMonth"></i><i class="calendar alternate outline icon"></i>'+months[calendarGetMonth()]+'<i class="caret right icon" id="changeToNextMonth"></i></div>');
         }, 200);
+        
+        $("#tableBody").empty();
+        fillCalendar(calendarGetMonth());
 
         for(var i=0; i<31; i++){ // reseting marked days
             $("#td"+i).removeClass( "markedDays" );
         }   
         coloringMarkedDays(); //coloring again
+        coloringPastDays();
         
         $("#nearestTasksList").empty(); //reseting nearest meetings and tasks view 
         $("#nearestMeetingsList").empty();
@@ -759,6 +792,9 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         $("#smallcalendar").transition("fade");
         $("#demo").transition("fade");
         $("#inputFields").transition("fade");
+        
+        // $("#calendar").empty();
+        // fillCalendar(calendarGetMonth());
 
         // $("#meetingTable").transition("fade");
         // $('#taskList').transition("fade");
@@ -780,8 +816,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         selected = day;
         document.location.hash = "singleDayView";
         
-        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
-
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         
         $("#upcomingMessage").transition('fade down');
         
@@ -804,8 +839,6 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         return day;
     }
     
-    
-    
     function getNextMonth(){      // when pressed on an arrow in month view, switched to next month's view 
         $("#demo1").transition("fade right");
         var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -819,6 +852,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         
         $("#tableBody").empty();
         fillCalendar(calendarGetMonth());
+        coloringPastDays();
         coloringMarkedDays();
         todaysDate();
 
@@ -835,7 +869,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     function getBeforeMonth(){      // when pressed on an arrow in month view, switched to next month's view 
         $("#demo1").transition("fade right");
         
-        var months = ["January","Februrar","March","April","May","June","July","August","September","October","November","December"];
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         var miau = (calendarGetMonth())-1;
         calendarSetMonth(miau);
 
@@ -845,6 +879,7 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         
         $("#tableBody").empty();
         fillCalendar(calendarGetMonth());
+        coloringPastDays();
         coloringMarkedDays();
         todaysDate();
 
@@ -860,6 +895,50 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
         // .then(addSchedules);
     }
     
+    function getNextMonthModal(){      // when pressed on an arrow in month view, switched to next month's view 
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+        var increaseByOne = (calendarGetMonth())+1;
+        calendarSetMonth(increaseByOne);
+
+        
+        $("#tableBodyModal").empty();
+        fillCalendarModal(getId());
+        $("#modalSpan").text(months[calendarGetMonth()]);
+        
+        var miau = new Date();
+        var dd = miau.getDate();
+        
+        if(getCurrentMonth()==calendarGetMonth()){
+            for(var i=1; i<dd; i++){
+                $("#Modaltd"+i).removeClass('available');
+                $("#Modaltd"+i).addClass('unavailable');
+            }
+            $("#Modaltd"+dd).addClass('today');
+        }
+    }
+    
+    function getBeforeMonthModal(){      // when pressed on an arrow in month view, switched to next month's view 
+        var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        var decreaseByOne = (calendarGetMonth())-1;
+        calendarSetMonth(decreaseByOne);
+        
+        $("#tableBodyModal").empty();
+        fillCalendarModal(getId());
+        $("#modalSpan").text(months[calendarGetMonth()]);
+        
+        var miau = new Date();
+        var dd = miau.getDate();
+        
+        if(getCurrentMonth()==calendarGetMonth()){
+            for(var i=1; i<dd; i++){
+                $("#Modaltd"+i).removeClass('available');
+                $("#Modaltd"+i).addClass('unavailable');
+            }
+            $("#Modaltd"+dd).addClass('today');
+        }
+    }
+    
     function calendarGetMonth(){
         return this.value;
     }
@@ -871,6 +950,18 @@ $(document).ready(function(){ // TRY TO REMOVE SELECTED VAR!!!!!!!!!!!??????????
     }
     function setSpan(myArgument) { 
         this.value1 = myArgument;
+    }
+    function getId(){
+        return this.valueId;
+    }
+    function setId(id){
+        this.valueId=id;
+    }
+    function getElementDay(){
+        return this.valueDay;
+    }
+    function setElementDay(day){
+        this.valueDay=day;
     }
     
 });

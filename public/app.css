@@ -187,3 +187,6 @@ td:not(:empty):hover {
   margin: auto;
 
 }
+.pastDays {
+  background-color: #b6c5db;
+}
