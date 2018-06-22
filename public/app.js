@@ -452,8 +452,8 @@ $(document).ready(function(){ // myModal, calendar
     }
     
     function getNextMonth(){      // when pressed on an arrow in month view, switched to next month's view 
-        $("#demo1").transition("fade left");
-        $("#calendar").transition("fade left");
+        $("#demo1").transition("fade right");
+        $("#calendar").transition("fade right");
         
         var miau = (calendarGetMonth())+1;
         calendarSetMonth(miau);
@@ -463,18 +463,18 @@ $(document).ready(function(){ // myModal, calendar
         }, 200);
         
         $("#tableBody").empty();
-        $("#calendar").transition("fade right");
+        $("#calendar").transition("fade left");
         fillCalendar(calendarGetMonth());
         coloringPastDays();
         coloringMarkedDays();
         todaysDate();
 
-        $("#demo1").transition("fade right");
+        $("#demo1").transition("fade left");
     }
     
     function getPreviousMonth(){      // when pressed on an arrow in month view, switched to next month's view 
-        $("#demo1").transition("fade right");
-        $("#calendar").transition("fade right");
+        $("#demo1").transition("fade left");
+        $("#calendar").transition("fade left");
         
         var miau = (calendarGetMonth())-1;
         calendarSetMonth(miau);
@@ -484,13 +484,13 @@ $(document).ready(function(){ // myModal, calendar
         }, 200);
         
         $("#tableBody").empty();
-        $("#calendar").transition("fade left");
+        $("#calendar").transition("fade right");
         fillCalendar(calendarGetMonth());
         coloringPastDays();
         coloringMarkedDays();
         todaysDate();
 
-        $("#demo1").transition("fade left");
+        $("#demo1").transition("fade right");
     }
     
     
@@ -758,7 +758,7 @@ $(document).ready(function(){ // myModal, calendar
         var increaseByOne = (calendarGetMonth())+1;
         calendarSetMonth(increaseByOne);
         
-        $("#tableBodyModal").transition("fade right")
+        $("#calendarModal").transition("fade right")
 
         
         $("#tableBodyModal").empty();
@@ -775,7 +775,7 @@ $(document).ready(function(){ // myModal, calendar
             }
             $("#Modaltd"+dd).addClass('today');
         }
-        $("#tableBodyModal").transition("fade left")
+        $("#calendarModal").transition("fade left")
 
     }
     
@@ -783,7 +783,7 @@ $(document).ready(function(){ // myModal, calendar
         var decreaseByOne = (calendarGetMonth())-1;
         calendarSetMonth(decreaseByOne);
         
-                $("#tableBodyModal").transition("fade left");
+                $("#calendarModal").transition("fade left");
 
         $("#tableBodyModal").empty();
         fillCalendarModal(getId());
@@ -799,7 +799,7 @@ $(document).ready(function(){ // myModal, calendar
             }
             $("#Modaltd"+dd).addClass('today');
         }
-                $("#tableBodyModal").transition("fade right")
+                $("#calendarModal").transition("fade right")
 
     }
     
