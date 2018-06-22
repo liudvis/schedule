@@ -5,7 +5,8 @@ $(document).ready(function(){ // myModal, calendar
     $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page 
     
     calendarSetMonth(getCurrentMonth());
-    
+            calendarSetMonthModal(calendarGetMonth());
+
     fillCalendar(calendarGetMonth()); 
     hidingElements(); 
     coloringPastDays();
@@ -75,7 +76,6 @@ $(document).ready(function(){ // myModal, calendar
     
     $(document).on("click", ".unavailable", function(event){ // ON EVENT FIRED
         $("#myModal").effect("shake");
-        setSpan(undefined);
     });
 
     $('#taskList').on('click', 'div.item', function(e){ //crosses out a task (if its done)
@@ -159,11 +159,11 @@ $(document).ready(function(){ // myModal, calendar
         // var date = new Date(), y = date.getFullYear(), m = calendarGetMonth();
         // var lastDay = new Date(y, m + 1, 0).getDate();
         console.log("clicked")
-        if (this.id=="changeToBeforeMonthModal" && calendarGetMonth()>getCurrentMonth()){
+        if (this.id=="changeToBeforeMonthModal" && calendarGetMonthModal()>getCurrentMonth()){
             console.log("Change to Previous Month Modal");
             getPreviousMonthModal();
         }
-        else if(this.id=="changeToNextMonthModal" && calendarGetMonth()<11){
+        else if(this.id=="changeToNextMonthModal" && calendarGetMonthModal()<11){
             console.log("Change to Next Month Modal");
             getNextMonthModal();
         }
@@ -246,7 +246,7 @@ $(document).ready(function(){ // myModal, calendar
             });                 
         } else {
             e.stopPropagation();
-            if(calendarGetMonth()<11){
+            if(calendarGetMonthModal()<11){
                 console.log("Change to Next Month Modal");
                 getNextMonthModal();
         }
@@ -261,7 +261,7 @@ $(document).ready(function(){ // myModal, calendar
             });                 
         } else {
             e.stopPropagation();
-            if(calendarGetMonth()>getCurrentMonth()){
+            if(calendarGetMonthModal()>getCurrentMonth()){
                 console.log("Change to Previous Month");
                 getPreviousMonthModal();
             }
@@ -281,6 +281,7 @@ $(document).ready(function(){ // myModal, calendar
             if(schedule.type==="meeting"){
                 var newMeeting = $('<div class="meeting">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");                 
                 newMeeting.data('id', schedule._id);
+                newMeeting.data('month', schedule.month);
                 newMeeting.data('startTime', schedule.meetingStart);
                 newMeeting.data('endTime', schedule.meetingEnd);
                     for(var i=schedule.meetingStart; i<schedule.meetingEnd; i++){
@@ -292,6 +293,7 @@ $(document).ready(function(){ // myModal, calendar
             } else if (schedule.type==="todo"){
                 var newTodo =  $('<div class="item">'+schedule.name+ddnButton(schedule)+'</div>').hide().fadeIn("fast");
                 newTodo.data('id', schedule._id);
+                newTodo.data('month', schedule.month);
                 newTodo.data('day', schedule.day);
                 newTodo.data('empty', false);
                 $('#taskList').append(newTodo);
@@ -302,7 +304,8 @@ $(document).ready(function(){ // myModal, calendar
     
     function createTodo(day){    // takes user input and creates a todo
         var userInput = $('#task').val();
-        if(userInput=="" /* || $(selected).hasClass("pastDays")*/) {
+        if(userInput==""  || $("#td"+day).hasClass("pastDays")) {
+            $('#task').val('');
             $('#field2').effect("shake");
         } else {
         $.post('/api/schedules',{name: userInput, type: "todo", day: day, month: calendarGetMonth()})
@@ -321,7 +324,7 @@ $(document).ready(function(){ // myModal, calendar
         var endOfTheMeeting = $('#dropdown2').find(":selected").val();
         var nameOfTheMeeting = $('#meeting').val();
 
-        if(nameOfTheMeeting=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End"){
+        if(nameOfTheMeeting=="" || $('#dropdown1 option:selected').text()=="Start"||$('#dropdown2 option:selected').text()=="End" || $("#td"+day).hasClass("pastDays")){
             $('#meetingInput').effect("shake");
         } else {
             $.post('/api/schedules',{name: nameOfTheMeeting, type: "meeting", day: day, meetingStart: startOfTheMeeting, meetingEnd: endOfTheMeeting, month: calendarGetMonth()})
@@ -355,10 +358,21 @@ $(document).ready(function(){ // myModal, calendar
     }
     
     
-    function updateTodo(todoId, todoDay, element, todoMonth, ddnOption){  //takes schedules id, updates it
+    function updateTodo(todoId, todoDay, element, todoMonth, ddnOption){  //takes todos id, updates it
+        console.log(todoMonth)
+        var date = new Date(), y = date.getFullYear(), m = todoMonth;
+        var lastDay = new Date(y, m + 1, 0).getDate();
+        console.log(date);
+        console.log(todoDay+": "+lastDay);
+        
+        if(lastDay<todoDay){
+            todoDay=1;
+            todoMonth++;
+        }
+        
         var updateUrl = '/api/schedules/' + todoId;
         var updateData ={day: todoDay, month: todoMonth};
-        
+
         $.ajax({
             method: 'PUT',
             url: updateUrl,
@@ -371,7 +385,7 @@ $(document).ready(function(){ // myModal, calendar
                 });
             } else {
                 setTimeout(function(){  
-                    element.html('<div>Moved to '+todoDay+" of "+todoMonth+'th <i class="check icon"></i></div>');
+                    element.html('<div>Moved to '+todoDay+" of "+monthNumberToWord(todoMonth)+'<i class="check icon"></i></div>');
                     element.addClass('elementChange').delay(1000).slideUp(700,function(){
                     });
                 }, 100);
@@ -639,7 +653,7 @@ $(document).ready(function(){ // myModal, calendar
         let elementId = arg.parent().parent().parent().data('id');
         let elementDay = arg.parent().parent().parent().data('day');
         let elementMonth = arg.parent().parent().parent().data('month');
-        console.log(elementDay);
+        console.log(elementMonth);
         
         if(arg.val()==0){
             updateTodo(elementId, elementDay+1, element, elementMonth, arg.val()); //moving to tomorrow
@@ -647,19 +661,25 @@ $(document).ready(function(){ // myModal, calendar
         else if(arg.val()==1){ // moving to another day
             $('body').append(generateModel());
             fillCalendarModal(elementId);
+            calendarSetMonthModal(calendarGetMonth())    
             $("#myModal").append();
+            $("#modalSpan").text(monthNumberToWord(calendarGetMonthModal()));
             $("#myModal").modal('show');
 
             var miau = new Date();
             var dd = miau.getDate();
             
-            if(getCurrentMonth()==calendarGetMonth()){
+            if(getCurrentMonth()==calendarGetMonthModal()){
                 for(var i=1; i<dd; i++){
                     $("#Modaltd"+i).removeClass('available');
                     $("#Modaltd"+i).addClass('unavailable');
                 }
                 $("#Modaltd"+dd).addClass('today');
-            } 
+            }
+            if(calendarGetMonthModal()==elementMonth){
+                $("#Modaltd"+elementDay).removeClass('available');
+                $("#Modaltd"+elementDay).addClass('unavailable');
+            }
             setId(elementId);
             setElementDay(elementDay);
             console.log("miaju")
@@ -686,6 +706,7 @@ $(document).ready(function(){ // myModal, calendar
           <div class="header">Select Day: </div>\
           <i class="close icon"></i>\
           <div class="content" >\
+            <h4 id="modalDiv"><i class="caret left icon" id="changeToBeforeMonthModal"></i><span id="modalSpan">'  +monthNumberToWord(calendarGetMonth())+  '</span><i class="caret right icon" id="changeToNextMonthModal"></i></h4>\
             <table class="ui celled striped table unstackable" id="calendarModal">\
               <thead>\
                 <tr><th>M</th>\
@@ -700,7 +721,6 @@ $(document).ready(function(){ // myModal, calendar
               </tbody>\
               </table>\
           </div>\
-          <div><i class="caret left icon" id="changeToBeforeMonthModal"></i><span id="modalSpan">'+monthNumberToWord(calendarGetMonth())+'</span><i class="caret right icon" id="changeToNextMonthModal"></i></div>\
           <button class="positive ui button" id="submitSpan" disabled>OK</button>\
         </div>';
         return modal;
@@ -737,17 +757,17 @@ $(document).ready(function(){ // myModal, calendar
                         theDAY=0;
                     }
                     if(theDAY==0){
-                        newDate = $('<td class="available '+calendarGetMonth()+'" id="Modaltd'+i+'">'+i+'</td>');
+                        newDate = $('<td class="available '+calendarGetMonthModal()+'" id="Modaltd'+i+'">'+i+'</td>');
                         newDate.data('id', elementId);
                         newDate.data('day', i);
-                        newDate.data('month', calendarGetMonth());
+                        newDate.data('month', calendarGetMonthModal());
                         $('#tableBodyModal').append(newDate);
                         $('#tableBodyModal').append($('</tr><tr>'));
                     } else {
-                        newDate = $('<td class="available '+calendarGetMonth()+'" id="Modaltd'+i+'">'+i+'</td>');
+                        newDate = $('<td class="available '+calendarGetMonthModal()+'" id="Modaltd'+i+'">'+i+'</td>');
                         newDate.data('id', elementId);
                         newDate.data('day', i);
-                        newDate.data('month', calendarGetMonth());
+                        newDate.data('month', calendarGetMonthModal());
                         $('#tableBodyModal').append(newDate);
                     }   
                     theDAY++;
@@ -755,44 +775,49 @@ $(document).ready(function(){ // myModal, calendar
     }
     
     function getNextMonthModal(){      // when pressed on an arrow in month view, switched to next month's view 
-        var increaseByOne = (calendarGetMonth())+1;
-        calendarSetMonth(increaseByOne);
+        var increaseByOne = (calendarGetMonthModal())+1;
+        console.log(increaseByOne)
+        calendarSetMonthModal(increaseByOne);
         
         $("#calendarModal").transition("fade right")
 
         
         $("#tableBodyModal").empty();
         fillCalendarModal(getId());
-        $("#modalSpan").text(monthNumberToWord(calendarGetMonth()));
+        $("#modalSpan").text(monthNumberToWord(calendarGetMonthModal()));
         
         var miau = new Date();
         var dd = miau.getDate();
         
-        if(getCurrentMonth()==calendarGetMonth()){
+        if(getCurrentMonth()==calendarGetMonthModal()){
             for(var i=1; i<dd; i++){
                 $("#Modaltd"+i).removeClass('available');
                 $("#Modaltd"+i).addClass('unavailable');
             }
             $("#Modaltd"+dd).addClass('today');
         }
+        // if(calendarGetMonthModal()==elementMonth){
+        //         $("#Modaltd"+elementDay).removeClass('available');
+        //         $("#Modaltd"+elementDay).addClass('unavailable');
+        //     }
         $("#calendarModal").transition("fade left")
 
     }
     
     function getPreviousMonthModal(){      // when pressed on an arrow in month view, switched to next month's view 
-        var decreaseByOne = (calendarGetMonth())-1;
-        calendarSetMonth(decreaseByOne);
+        var decreaseByOne = (calendarGetMonthModal())-1;
+        calendarSetMonthModal(decreaseByOne);
         
                 $("#calendarModal").transition("fade left");
 
         $("#tableBodyModal").empty();
         fillCalendarModal(getId());
-        $("#modalSpan").text(monthNumberToWord(calendarGetMonth()));
+        $("#modalSpan").text(monthNumberToWord(calendarGetMonthModal()));
         
         var miau = new Date();
         var dd = miau.getDate();
         
-        if(getCurrentMonth()==calendarGetMonth()){
+        if(getCurrentMonth()==calendarGetMonthModal()){
             for(var i=1; i<dd; i++){
                 $("#Modaltd"+i).removeClass('available');
                 $("#Modaltd"+i).addClass('unavailable');
@@ -959,6 +984,12 @@ $(document).ready(function(){ // myModal, calendar
     }
     function calendarSetMonth(month){
         this.value=month;
+    }
+    function calendarGetMonthModal(){
+        return this.valueModal;
+    }
+    function calendarSetMonthModal(month){
+        this.valueModal=month;
     }
     function getSpan() { 
         return this.value1; 
