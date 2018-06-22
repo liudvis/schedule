@@ -215,7 +215,8 @@ $(document).ready(function(){ // myModal, calendar
                 event.preventDefault();
             });                 
         } else {
-            if(this.id=="changeToNextMonth" && calendarGetMonth()<11){
+            e.stopPropagation();
+            if(calendarGetMonth()<11){
                 console.log("Change to Next Month");
                 getNextMonth();
             }
@@ -229,9 +230,40 @@ $(document).ready(function(){ // myModal, calendar
                 event.preventDefault();
             });                 
         } else {
-            if (this.id=="changeToBeforeMonth" && calendarGetMonth()>0){
+            e.stopPropagation();
+            if(calendarGetMonth()>0){
                 console.log("Change to Previous Month");
                 getPreviousMonth();
+            }
+        }
+    });
+    
+    $(document).on("swipeleft", "#calendarModal", function(e) {
+        if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
+            $(document).on('swipeleft', 'html', function(event) {  // swipe on desktop disabled
+                event.stopPropagation();
+                event.preventDefault();
+            });                 
+        } else {
+            e.stopPropagation();
+            if(calendarGetMonth()<11){
+                console.log("Change to Next Month Modal");
+                getNextMonthModal();
+        }
+        }
+    });
+    
+    $(document).on("swiperight", "#calendarModal", function(e) {
+        if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
+            $(document).on('swiperight', 'html', function(event) {  // swipe on desktop disabled
+                event.stopPropagation();
+                event.preventDefault();
+            });                 
+        } else {
+            e.stopPropagation();
+            if(calendarGetMonth()>getCurrentMonth()){
+                console.log("Change to Previous Month");
+                getPreviousMonthModal();
             }
         }
     });
@@ -725,6 +757,8 @@ $(document).ready(function(){ // myModal, calendar
     function getNextMonthModal(){      // when pressed on an arrow in month view, switched to next month's view 
         var increaseByOne = (calendarGetMonth())+1;
         calendarSetMonth(increaseByOne);
+        
+        $("#tableBodyModal").transition("fade left")
 
         
         $("#tableBodyModal").empty();
@@ -741,12 +775,16 @@ $(document).ready(function(){ // myModal, calendar
             }
             $("#Modaltd"+dd).addClass('today');
         }
+        $("#tableBodyModal").transition("fade right")
+
     }
     
     function getPreviousMonthModal(){      // when pressed on an arrow in month view, switched to next month's view 
         var decreaseByOne = (calendarGetMonth())-1;
         calendarSetMonth(decreaseByOne);
         
+                $("#tableBodyModal").transition("fade right");
+
         $("#tableBodyModal").empty();
         fillCalendarModal(getId());
         $("#modalSpan").text(monthNumberToWord(calendarGetMonth()));
@@ -761,6 +799,8 @@ $(document).ready(function(){ // myModal, calendar
             }
             $("#Modaltd"+dd).addClass('today');
         }
+                $("#tableBodyModal").transition("fade left")
+
     }
     
     
@@ -912,7 +952,6 @@ $(document).ready(function(){ // myModal, calendar
         }, 200);
         todaysDate();
     }
-    console.log("miau")
 
     
     function calendarGetMonth(){
