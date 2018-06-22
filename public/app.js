@@ -758,7 +758,7 @@ $(document).ready(function(){ // myModal, calendar
         var increaseByOne = (calendarGetMonth())+1;
         calendarSetMonth(increaseByOne);
         
-        $("#tableBodyModal").transition("fade left")
+        $("#tableBodyModal").transition("fade right")
 
         
         $("#tableBodyModal").empty();
@@ -775,7 +775,7 @@ $(document).ready(function(){ // myModal, calendar
             }
             $("#Modaltd"+dd).addClass('today');
         }
-        $("#tableBodyModal").transition("fade right")
+        $("#tableBodyModal").transition("fade left")
 
     }
     
@@ -783,7 +783,7 @@ $(document).ready(function(){ // myModal, calendar
         var decreaseByOne = (calendarGetMonth())-1;
         calendarSetMonth(decreaseByOne);
         
-                $("#tableBodyModal").transition("fade right");
+                $("#tableBodyModal").transition("fade left");
 
         $("#tableBodyModal").empty();
         fillCalendarModal(getId());
@@ -799,7 +799,7 @@ $(document).ready(function(){ // myModal, calendar
             }
             $("#Modaltd"+dd).addClass('today');
         }
-                $("#tableBodyModal").transition("fade left")
+                $("#tableBodyModal").transition("fade right")
 
     }
     
