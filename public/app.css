@@ -190,3 +190,6 @@ td:not(:empty):hover {
 .pastDays {
   background-color: #b6c5db;
 }
+#modalDiv {
+  text-align: center;
+}
