@@ -15,9 +15,7 @@ exports.createSchedule =  function(req, res){
         newSchedule.author.username=req.user.username;
         newSchedule.author.id=req.user._id;
         newSchedule.save();
-        console.log("?????????!!!!!!!!"+newSchedule)
         res.json(newSchedule);
-        // console.log(newSchedule)
     })
     .catch(function(err){
         res.send(err);

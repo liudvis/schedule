@@ -73,7 +73,7 @@ app.post("/register", function(req,  res){
             res.redirect("register");
         } else {
             passport.authenticate("local")(req, res, function(){
-            req.flash("success", "User " + user.username + "was successfully registered");
+            req.flash("success", "User " + user.username + " was successfully registered");
             res.redirect("/");
             });
         }
