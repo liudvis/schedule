@@ -5,7 +5,7 @@ $(document).ready(function(){ // myModal, calendar
     $.mobile.loading( 'show', { theme: "b", text: "", textonly: false});  //removes "loading" from page 
     
     calendarSetMonth(getCurrentMonth());
-            calendarSetMonthModal(calendarGetMonth());
+    calendarSetMonthModal(calendarGetMonth());
 
     fillCalendar(calendarGetMonth()); 
     hidingElements(); 
@@ -43,11 +43,6 @@ $(document).ready(function(){ // myModal, calendar
         $("#arrowRotate").toggleClass("arrowRotateClass");
     });
     
-    $(document).on("click", "td", function(event){ 
-        console.log($(this).data());
-        console.log($(this).attr("id"));
-    });
-    
     $(document).on("click", ".available", function(event){ // ON EVENT FIRED
         $("#submitSpan").removeAttr('disabled');
         $(".available").removeClass("selectedModalTd");
@@ -60,17 +55,12 @@ $(document).ready(function(){ // myModal, calendar
             $("#myModal").effect("shake");
         }
         else {
-            let id = getSpan().data('id');
-            let day = getSpan().data('day'); 
-            let month = getSpan().data('month');
+            let id = getSpan().data('id'), day = getSpan().data('day'), month = getSpan().data('month');
             
-            console.log(id + " "+ day+ " " + month +" ");
-
             updateTodo(id, day, getElement(), month, 1); 
             $("#myModal").modal("hide");
             $("#myModal").remove();
             setSpan(undefined);
-            console.log(calendarGetMonth());
         }
     });
     
@@ -155,16 +145,10 @@ $(document).ready(function(){ // myModal, calendar
     });
     
     $(document).on("click", "i", function(e) { // pressing on an arrow switches to another days view
-        // e.stopPropagation();
-        // var date = new Date(), y = date.getFullYear(), m = calendarGetMonth();
-        // var lastDay = new Date(y, m + 1, 0).getDate();
-        console.log("clicked")
         if (this.id=="changeToBeforeMonthModal" && calendarGetMonthModal()>getCurrentMonth()){
-            console.log("Change to Previous Month Modal");
             getPreviousMonthModal();
         }
         else if(this.id=="changeToNextMonthModal" && calendarGetMonthModal()<11){
-            console.log("Change to Next Month Modal");
             getNextMonthModal();
         }
     });
@@ -180,12 +164,8 @@ $(document).ready(function(){ // myModal, calendar
     
     $("#lists").on("swipeleft", function(e) {
         if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
-            $(document).on('swipeleft', 'html', function(event) {  // swipe on desktop disabled
-                event.stopPropagation();
-                event.preventDefault();
-            });                 
+            swipeDisableOnDesktop();                 
         } else {
-            e.stopPropagation();    //changes view to next day
             var date = new Date(), y = date.getFullYear(), m = date.getMonth();
             var lastDay = new Date(y, m + 1, 0).getDate();
             if(getSelectedDay()<lastDay){
@@ -196,12 +176,8 @@ $(document).ready(function(){ // myModal, calendar
               
     $("#lists").on("swiperight", function(e) {
         if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
-            $(document).on('swiperight', 'html', function(event) {  // swipe on desktop disabled
-                 event.stopPropagation();
-                 event.preventDefault();
-            }); 
+            swipeDisableOnDesktop();  
         } else {
-            e.stopPropagation();    //changes view to previous day
             if(getSelectedDay()>1){
                 getPreviousDay();
             }
@@ -210,14 +186,9 @@ $(document).ready(function(){ // myModal, calendar
     
     $("#calendar").on("swipeleft", function(e) {
         if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
-            $(document).on('swipeleft', 'html', function(event) {  // swipe on desktop disabled
-                event.stopPropagation();
-                event.preventDefault();
-            });                 
+            swipeDisableOnDesktop();                 
         } else {
-            e.stopPropagation();
             if(calendarGetMonth()<11){
-                console.log("Change to Next Month");
                 getNextMonth();
             }
         }
@@ -225,14 +196,9 @@ $(document).ready(function(){ // myModal, calendar
     
     $("#calendar").on("swiperight", function(e) {
         if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
-            $(document).on('swiperight', 'html', function(event) {  // swipe on desktop disabled
-                event.stopPropagation();
-                event.preventDefault();
-            });                 
+            swipeDisableOnDesktop();               
         } else {
-            e.stopPropagation();
             if(calendarGetMonth()>0){
-                console.log("Change to Previous Month");
                 getPreviousMonth();
             }
         }
@@ -240,14 +206,9 @@ $(document).ready(function(){ // myModal, calendar
     
     $(document).on("swipeleft", "#calendarModal", function(e) {
         if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
-            $(document).on('swipeleft', 'html', function(event) {  // swipe on desktop disabled
-                event.stopPropagation();
-                event.preventDefault();
-            });                 
+            swipeDisableOnDesktop();            
         } else {
-            e.stopPropagation();
             if(calendarGetMonthModal()<11){
-                console.log("Change to Next Month Modal");
                 getNextMonthModal();
         }
         }
@@ -255,18 +216,21 @@ $(document).ready(function(){ // myModal, calendar
     
     $(document).on("swiperight", "#calendarModal", function(e) {
         if(!(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) { //  checks if on desktop or mobile
-            $(document).on('swiperight', 'html', function(event) {  // swipe on desktop disabled
-                event.stopPropagation();
-                event.preventDefault();
-            });                 
+            swipeDisableOnDesktop();               
         } else {
-            e.stopPropagation();
             if(calendarGetMonthModal()>getCurrentMonth()){
-                console.log("Change to Previous Month");
                 getPreviousMonthModal();
             }
         }
     });
+    
+    
+    function swipeDisableOnDesktop(){
+        $(document).on('swiperight', 'html', function(event) {  // swipe on desktop disabled
+            event.stopPropagation();
+            event.preventDefault();
+        });
+    }
     
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
@@ -699,7 +663,7 @@ $(document).ready(function(){ // myModal, calendar
         }
     }
     
-    
+  
     function generateModel(){  
         let modal = 
         '<div class="ui modal" id="myModal">\
