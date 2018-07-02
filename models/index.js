@@ -6,4 +6,3 @@ mongoose.Promise = Promise;
 
 module.exports.Schedule = require('./schedule');
 module.exports.User = require('./user');
-// module.exports.Ip = require('./ip');
