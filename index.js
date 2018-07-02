@@ -4,6 +4,7 @@ var express     = require('express'),
     passport    = require('passport'),
     LocalStrategy = require('passport-local'),
     User        = require("./models/user"),
+    Ip          = require("./models/ip"),
     flash       = require("connect-flash"),
     bodyParser  = require("body-parser");
     
@@ -81,9 +82,11 @@ app.post("/register", function(req,  res){
 });
 //login  form 
 app.get("/login", function(req, res){
-    // if(err){
-    //         req.flash("error", "Incorect username or password.");
-    // }
+    Ip.create(req.body)
+    .then(function(newIp){
+        newIp.ip=req.ip;
+        newIp.save();
+    })
     res.render('login.ejs');
 });
 //login logic
