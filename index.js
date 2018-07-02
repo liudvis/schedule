@@ -4,7 +4,6 @@ var express     = require('express'),
     passport    = require('passport'),
     LocalStrategy = require('passport-local'),
     User        = require("./models/user"),
-    Ip          = require("./models/ip"),
     flash       = require("connect-flash"),
     bodyParser  = require("body-parser");
     
