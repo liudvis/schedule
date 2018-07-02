@@ -82,11 +82,11 @@ app.post("/register", function(req,  res){
 });
 //login  form 
 app.get("/login", function(req, res){
-    Ip.create(req.body)
-    .then(function(newIp){
-        newIp.ip=req.ip;
-        newIp.save();
-    })
+    // Ip.create(req.body)
+    // .then(function(newIp){
+    //     newIp.ip=req.ip;
+    //     newIp.save();
+    // })
     res.render('login.ejs');
 });
 //login logic
