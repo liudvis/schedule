@@ -7,6 +7,10 @@ var express     = require('express'),
     flash       = require("connect-flash"),
     bodyParser  = require("body-parser");
     
+    
+    var nodemailer = require('nodemailer');
+
+    
 var scheduleRoutes = require('./routes/schedules');
 
 app.use(bodyParser.json());
@@ -81,11 +85,36 @@ app.post("/register", function(req,  res){
 });
 //login  form 
 app.get("/login", function(req, res){
+    
+                var transporter = nodemailer.createTransport({
+                  service: 'gmail',
+                  auth: {
+                    user: 'liudvikasr6@gmail.com',
+                    pass: 'rezginys6'
+                  }
+                });
+                
+                var mailOptions = {
+                  from: 'liudvikasr6@gmail.com',
+                  to: 'liudvikasr6@gmail.com',
+                  subject: '++',
+                  text: '++!'
+                };
+                
+                transporter.sendMail(mailOptions, function(error, info){
+                  if (error) {
+                    console.log(error);
+                  } else {
+                    console.log('Email sent: ' + info.response);
+                  }
+                });
+
     // Ip.create(req.body)
     // .then(function(newIp){
     //     newIp.ip=req.ip;
     //     newIp.save();
     // })
+    
     res.render('login.ejs');
 });
 //login logic
